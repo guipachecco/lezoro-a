@@ -1,5 +1,35 @@
 import { useState } from 'react'
+import { sb } from './supabase.js'
 import { Bar, Grao, Icon, Wordmark } from './ui.jsx'
+
+/** Tela aberta pelo link de "Esqueci minha senha". */
+export function NewPassword({ onDone }) {
+  const [pass, setPass] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  async function submit(e) {
+    e.preventDefault()
+    if (pass.length < MIN_PASS) return setErr(`A senha precisa ter pelo menos ${MIN_PASS} caracteres.`)
+    setBusy(true)
+    const { data, error } = await sb.auth.updateUser({ password: pass })
+    setBusy(false)
+    if (error) return setErr(authError(error))
+    onDone(data.user)
+  }
+  return (
+    <div className="screen auth">
+      <div className="auth-peek"><Grao st="pensando" style={{ width: 110 }} /></div>
+      <form className="card auth-card" onSubmit={submit} noValidate>
+        <h2>Crie uma nova senha</h2>
+        <label className="fl">Nova senha
+          <span className="field"><Icon n="cadeado" /><input id="new-password" type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder={`Mínimo de ${MIN_PASS} caracteres`} autoComplete="new-password" /></span>
+        </label>
+        {err && <p className="err" role="alert">{err}</p>}
+        <button className="btn" type="submit" disabled={busy}>{busy ? 'Aguarde…' : 'Salvar e entrar'}</button>
+      </form>
+    </div>
+  )
+}
 
 export function Welcome({ onStart, onLogin }) {
   return (
@@ -18,23 +48,84 @@ export function Welcome({ onStart, onLogin }) {
 }
 
 const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
+const MIN_PASS = 8
 
-export function Auth({ mode: initial, saved, onCreate, onEnter, onBack }) {
+// Mensagens do Supabase traduzidas para o usuário.
+function authError(err) {
+  const m = (err?.message || '').toLowerCase()
+  if (m.includes('invalid login')) return 'E-mail ou senha incorretos.'
+  if (m.includes('already registered')) return 'Este e-mail já tem conta. Use a aba Entrar.'
+  if (m.includes('not confirmed')) return 'Confirme seu e-mail pelo link que enviamos e depois entre.'
+  if (m.includes('rate limit') || m.includes('security purposes')) return 'Muitas tentativas seguidas. Espere um minuto e tente de novo.'
+  if (m.includes('fetch')) return 'Sem conexão. Verifique a internet e tente de novo.'
+  return 'Não deu certo agora. Tente de novo em instantes.'
+}
+
+/**
+ * Cadastro e login.
+ * Com Supabase: senha de verdade; onAuthed(user) recebe o usuário do Supabase.
+ * Sem Supabase (modo local): onCreate(user) e onEnter() usam só este aparelho.
+ */
+export function Auth({ mode: initial, saved, onCreate, onEnter, onAuthed, onBack }) {
   const [mode, setMode] = useState(initial)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [pass, setPass] = useState('')
+  const [show, setShow] = useState(false)
   const [err, setErr] = useState('')
+  const [info, setInfo] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  function submit(e) {
+  const switchTo = (m) => { setMode(m); setErr(''); setInfo('') }
+
+  async function submit(e) {
     e.preventDefault()
+    setErr(''); setInfo('')
     const mail = email.trim().toLowerCase()
+    if (mode === 'create' && name.trim().length < 2) return setErr('Digite seu nome para o Grão saber como te chamar.')
     if (!emailOk(mail)) return setErr('Digite um e-mail válido, como ana@exemplo.com.')
-    if (mode === 'create') {
-      if (name.trim().length < 2) return setErr('Digite seu nome para o Grão saber como te chamar.')
-      return onCreate({ name: name.trim(), email: mail })
+
+    if (!sb) {
+      if (mode === 'create') return onCreate({ name: name.trim(), email: mail })
+      if (saved?.user.email === mail) return onEnter()
+      return setErr('Não encontramos essa conta neste aparelho. Crie uma conta para começar.')
     }
-    if (saved?.user.email === mail) return onEnter()
-    setErr('Não encontramos essa conta neste aparelho. Crie uma conta para começar.')
+
+    if (pass.length < MIN_PASS) return setErr(`A senha precisa ter pelo menos ${MIN_PASS} caracteres.`)
+    setBusy(true)
+    try {
+      if (mode === 'create') {
+        const { data, error } = await sb.auth.signUp({
+          email: mail, password: pass,
+          options: { data: { name: name.trim() }, emailRedirectTo: window.location.origin },
+        })
+        if (error) throw error
+        if (data.user?.identities?.length === 0) throw new Error('already registered')
+        if (data.session) return onAuthed(data.user)
+        setPass('')
+        switchTo('enter')
+        setInfo(`Enviamos um link para ${mail}. Confirme o e-mail e depois entre com sua senha.`)
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email: mail, password: pass })
+        if (error) throw error
+        onAuthed(data.user)
+      }
+    } catch (error) {
+      setErr(authError(error))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function forgot() {
+    setErr(''); setInfo('')
+    const mail = email.trim().toLowerCase()
+    if (!emailOk(mail)) return setErr('Digite seu e-mail acima e toque de novo em "Esqueci minha senha".')
+    setBusy(true)
+    const { error } = await sb.auth.resetPasswordForEmail(mail, { redirectTo: window.location.origin })
+    setBusy(false)
+    if (error) setErr(authError(error))
+    else setInfo(`Se ${mail} tiver conta, você vai receber um link para criar uma nova senha.`)
   }
 
   return (
@@ -43,8 +134,8 @@ export function Auth({ mode: initial, saved, onCreate, onEnter, onBack }) {
       <div className="auth-peek"><Grao st={err ? 'encoraja' : 'feliz'} style={{ width: 110 }} /></div>
       <form className="card auth-card" onSubmit={submit} noValidate>
         <div className="tabs" role="tablist">
-          <button type="button" role="tab" aria-selected={mode === 'enter'} className={mode === 'enter' ? 'on' : ''} onClick={() => { setMode('enter'); setErr('') }}>Entrar</button>
-          <button type="button" role="tab" aria-selected={mode === 'create'} className={mode === 'create' ? 'on' : ''} onClick={() => { setMode('create'); setErr('') }}>Criar conta</button>
+          <button type="button" role="tab" aria-selected={mode === 'enter'} className={mode === 'enter' ? 'on' : ''} onClick={() => switchTo('enter')}>Entrar</button>
+          <button type="button" role="tab" aria-selected={mode === 'create'} className={mode === 'create' ? 'on' : ''} onClick={() => switchTo('create')}>Criar conta</button>
         </div>
         {mode === 'create' && (
           <label className="fl">Nome
@@ -54,9 +145,21 @@ export function Auth({ mode: initial, saved, onCreate, onEnter, onBack }) {
         <label className="fl">E-mail
           <span className="field"><Icon n="email" /><input id="email" type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ana@exemplo.com" autoComplete="email" /></span>
         </label>
+        {sb && (
+          <label className="fl">Senha
+            <span className="field">
+              <Icon n="cadeado" />
+              <input id="password" type={show ? 'text' : 'password'} value={pass} onChange={(e) => setPass(e.target.value)}
+                placeholder={mode === 'create' ? `Mínimo de ${MIN_PASS} caracteres` : 'Sua senha'} autoComplete={mode === 'create' ? 'new-password' : 'current-password'} />
+              <button type="button" className="eye" onClick={() => setShow(!show)} aria-label={show ? 'Esconder senha' : 'Mostrar senha'}><Icon n="olho" /></button>
+            </span>
+          </label>
+        )}
+        {sb && mode === 'enter' && <button type="button" className="link" onClick={forgot} disabled={busy}>Esqueci minha senha</button>}
         {err && <p className="err" role="alert">{err}</p>}
-        <button className="btn" type="submit">{mode === 'create' ? 'Criar conta' : 'Entrar'}</button>
-        <p className="hint">Versão de teste: seu progresso fica salvo neste aparelho. O login com senha chega na próxima versão.</p>
+        {info && <p className="info" role="status">{info}</p>}
+        <button className="btn" type="submit" disabled={busy}>{busy ? 'Aguarde…' : mode === 'create' ? 'Criar conta' : 'Entrar'}</button>
+        {!sb && <p className="hint">Modo local: seu progresso fica salvo só neste aparelho.</p>}
       </form>
     </div>
   )

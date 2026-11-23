@@ -1,5 +1,6 @@
 import { addDays, badges, currentLesson, dailyIndex, levelOf, LEVELS } from './game.js'
 import { DAILY, UNITS } from './content.js'
+import { sb } from './supabase.js'
 import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
 
 const unit = UNITS[0]
@@ -111,7 +112,7 @@ export function Badges({ s, today }) {
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-export function Profile({ s, today }) {
+export function Profile({ s, today, onLogout }) {
   const lv = levelOf(s.seeds)
   const done = Object.values(s.done)
   const total = done.reduce((a, d) => a + d.total, 0)
@@ -157,6 +158,9 @@ export function Profile({ s, today }) {
           ))}
         </div>
       </div>
+      {sb
+        ? <button type="button" className="logout" onClick={onLogout}><Icon n="sair" />Sair da conta</button>
+        : <p className="hint muted center">Modo local: seu progresso fica salvo só neste aparelho.</p>}
     </div>
   )
 }
