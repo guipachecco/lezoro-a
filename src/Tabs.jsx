@@ -3,13 +3,14 @@ import { DAILY, UNITS } from './content.js'
 import { sb } from './supabase.js'
 import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
 
-const unit = UNITS[0]
-const OFFSETS = [0, -48, -16, 36, 8]
+const ALL = UNITS.flatMap((u) => u.lessons)
+const UNIT_BG = ['var(--blue)', 'var(--violet)', 'var(--navy)']
+const OFFSETS = [0, -48, -16, 36, 8, -30]
 const WEEK = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
 export function Home({ s, today, onLesson, onDaily }) {
   const lv = levelOf(s.seeds)
-  const cur = currentLesson(unit.lessons, s.done)
+  const cur = currentLesson(ALL, s.done)
   const dailyDone = s.dailyDone === today
   const daily = DAILY[dailyIndex(today, DAILY.length)]
   const thirsty = s.streak > 0 && s.lastDay !== today
@@ -37,22 +38,30 @@ export function Home({ s, today, onLesson, onDaily }) {
           {!dailyDone && <button className="btn inline small" type="button" onClick={onDaily}>Começar</button>}
         </div>
       </div>
-      <div className="unit"><Icon n="biblia" /><div><b>Unidade 1 · {unit.title}</b><small>{unit.subtitle}</small></div></div>
-      <div className="trail">
-        {unit.lessons.map((l, i) => {
-          const state = s.done[l.id] ? 'done' : i === cur ? 'cur' : 'lock'
-          return (
-            <div key={l.id} className="trail-row" style={{ '--x': `${OFFSETS[i % OFFSETS.length]}px` }}>
-              <button type="button" className={`node ${state}`} disabled={state === 'lock'} onClick={() => onLesson(l)} aria-label={`${l.title}${state === 'lock' ? ' (bloqueada)' : ''}`}>
-                <Icon n={state === 'done' ? 'check' : state === 'cur' ? 'trilha' : 'cadeado'} />
-              </button>
-              <span className="node-label">{l.title}</span>
-              {state === 'cur' && <Grao st="feliz" lvl={lv.n} className="trail-m hop" />}
+      {UNITS.map((unit, ui) => {
+        const start = UNITS.slice(0, ui).reduce((n, u) => n + u.lessons.length, 0)
+        return (
+          <section key={unit.id} className="stack">
+            <div className="unit" style={{ background: UNIT_BG[ui % UNIT_BG.length] }}><Icon n="biblia" /><div><b>Unidade {ui + 1} · {unit.title}</b><small>{unit.subtitle}</small></div></div>
+            <div className="trail">
+              {unit.lessons.map((l, k) => {
+                const i = start + k
+                const state = s.done[l.id] ? 'done' : i === cur ? 'cur' : 'lock'
+                return (
+                  <div key={l.id} className="trail-row" style={{ '--x': `${OFFSETS[k % OFFSETS.length]}px` }}>
+                    <button type="button" className={`node ${state}`} disabled={state === 'lock'} onClick={() => onLesson(l)} aria-label={`${l.title}${state === 'lock' ? ' (bloqueada)' : ''}`}>
+                      <Icon n={state === 'done' ? 'check' : state === 'cur' ? 'trilha' : 'cadeado'} />
+                    </button>
+                    <span className="node-label">{l.title}</span>
+                    {state === 'cur' && <Grao st="feliz" lvl={lv.n} className="trail-m hop" />}
+                  </div>
+                )
+              })}
             </div>
-          )
-        })}
-        {cur === unit.lessons.length && <p className="muted center">Você concluiu Gênesis! Novas unidades chegam em breve.</p>}
-      </div>
+          </section>
+        )
+      })}
+      {cur === ALL.length && <p className="muted center">Você concluiu a trilha toda! Novas unidades chegam em breve.</p>}
     </div>
   )
 }
@@ -63,15 +72,18 @@ export function Bible({ s }) {
       <Grao st="lendo" lvl={levelOf(s.seeds).n} style={{ width: 150 }} />
       <h2>Leitura da Bíblia</h2>
       <p className="muted">Em breve você vai ler os capítulos de cada lição aqui, com marcações e versículos favoritos.</p>
-      <div className="stack" style={{ width: '100%' }}>
-        {unit.lessons.map((l) => (
-          <div key={l.id} className="choice static">
-            <Icon n="biblia" />
-            <span><b>{l.title}</b><small>{l.qs.map((q) => q.ref.replace('Gênesis ', 'Gn ')).slice(0, 3).join(' · ')}</small></span>
-            {s.done[l.id] && <Icon n="check" style={{ color: 'var(--lime-deep)', marginLeft: 'auto' }} />}
-          </div>
-        ))}
-      </div>
+      {UNITS.map((unit) => (
+        <div key={unit.id} className="stack" style={{ width: '100%', textAlign: 'left' }}>
+          <span className="lbl">{unit.title}</span>
+          {unit.lessons.map((l) => (
+            <div key={l.id} className="choice static">
+              <Icon n="biblia" />
+              <span><b>{l.title}</b><small>{l.qs.slice(0, 2).map((q) => q.ref).join(' · ')}</small></span>
+              {s.done[l.id] && <Icon n="check" style={{ color: 'var(--lime-deep)', marginLeft: 'auto' }} />}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   )
 }
@@ -80,7 +92,7 @@ const lastWeek = (today) => Array.from({ length: 7 }, (_, k) => addDays(today, k
 const dow = (key) => { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d).getDay() }
 
 export function Badges({ s, today }) {
-  const list = badges(s, unit.lessons.map((l) => l.id))
+  const list = badges(s, UNITS)
   const lv = levelOf(s.seeds)
   return (
     <div className="screen">

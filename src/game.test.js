@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { addDays, levelOf, newState, refresh, water, finishLesson, finishDaily, loseLamp, currentLesson, dailyIndex } from './game.js'
+import { addDays, badges, levelOf, newState, refresh, water, finishLesson, finishDaily, loseLamp, currentLesson, dailyIndex } from './game.js'
 import { UNITS, DAILY } from './content.js'
 
 const base = () => newState({ name: 'Ana' }, {}, '2026-11-20')
@@ -57,6 +57,23 @@ test('níveis e trilha', () => {
   assert.equal(currentLesson(lessons, { 'gn-1': {} }), 1)
   const i = dailyIndex('2026-11-22', DAILY.length)
   assert.ok(i >= 0 && i < DAILY.length)
+})
+
+test('selos por unidade', () => {
+  const ids = UNITS[0].lessons.map((l) => l.id)
+  const s = { ...base(), done: Object.fromEntries(ids.map((id) => [id, { correct: 4, total: 5 }])) }
+  const b = Object.fromEntries(badges(s, UNITS).map((x) => [x.id, x]))
+  assert.equal(b.genesis.on, true)
+  assert.equal(b.exodo.on, false)
+  assert.equal(b.exodo.progress, `0/${UNITS[1].lessons.length} lições`)
+  assert.equal(b.trilha.on, false)
+  assert.equal(b.perfeita.on, false)
+})
+
+test('conteúdo: ids únicos e 5 perguntas por lição', () => {
+  const lessons = UNITS.flatMap((u) => u.lessons)
+  assert.equal(new Set(lessons.map((l) => l.id)).size, lessons.length)
+  for (const l of lessons) assert.equal(l.qs.length, 5, l.id)
 })
 
 test('conteúdo: toda pergunta tem 4 alternativas distintas e referência', () => {

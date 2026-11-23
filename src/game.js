@@ -81,17 +81,25 @@ export function dailyIndex(today, count) {
   return Math.floor(Date.UTC(y, m - 1, d) / 864e5) % count
 }
 
-export function badges(s, lessonIds) {
-  const lessons = Object.keys(s.done).length
+export function badges(s, units) {
+  const count = (ls) => ls.filter((l) => s.done[l.id]).length
+  const all = units.flatMap((u) => u.lessons)
+  const lessons = count(all)
   const perfect = Object.values(s.done).some((d) => d.correct === d.total)
-  const gn = lessonIds.filter((id) => s.done[id]).length
+  const unit = (unitId, id, icon, title) => {
+    const ls = units.find((u) => u.id === unitId).lessons
+    return { id, icon, title, on: count(ls) === ls.length, progress: `${count(ls)}/${ls.length} lições` }
+  }
   return [
     { id: 'grao', icon: 'semente', title: 'Primeiro grão', on: lessons >= 1, progress: `${Math.min(lessons, 1)}/1 lição` },
     { id: 'semana', icon: 'gota', title: '7 dias regados', on: s.best >= 7, progress: `${Math.min(s.best, 7)}/7 dias` },
-    { id: 'perfeita', icon: 'luz', title: 'Lição perfeita', on: perfect, progress: 'Acerte tudo numa lição' },
-    { id: 'genesis', icon: 'biblia', title: 'Leitor de Gênesis', on: gn === lessonIds.length, progress: `${gn}/${lessonIds.length} lições` },
-    { id: 'mil', icon: 'trilha', title: '1.000 sementes', on: s.seeds >= 1000, progress: `${Math.min(s.seeds, 1000)}/1.000` },
-    { id: 'raiz', icon: 'medalha', title: 'Raiz firme', on: s.best >= 30, progress: `${Math.min(s.best, 30)}/30 dias` },
+    { id: 'perfeita', icon: 'check', title: 'Lição perfeita', on: perfect, progress: 'Acerte tudo numa lição' },
+    unit('gn', 'genesis', 'biblia', 'Leitor de Gênesis'),
+    unit('ex', 'exodo', 'lamparina', 'Caminho do Êxodo'),
+    unit('jesus', 'jesus', 'luz', 'Seguidor de Jesus'),
+    { id: 'mil', icon: 'semente', title: '1.000 sementes', on: s.seeds >= 1000, progress: `${Math.min(s.seeds, 1000)}/1.000` },
+    { id: 'raiz', icon: 'trilha', title: 'Raiz firme', on: s.best >= 30, progress: `${Math.min(s.best, 30)}/30 dias` },
+    { id: 'trilha', icon: 'medalha', title: 'Trilha completa', on: lessons === all.length, progress: `${lessons}/${all.length} lições` },
   ]
 }
 

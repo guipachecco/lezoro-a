@@ -181,7 +181,9 @@ h1, h2, h3 { font-family: var(--display); color: var(--navy); letter-spacing: -.
 .hex .ic { width: 32px; height: 32px }
 .hx-semana { background: var(--blue) !important; color: #fff !important }
 .hx-genesis { background: var(--violet) !important; color: #fff !important }
-.hx-perfeita, .hx-raiz { background: var(--cream) !important }
+.hx-exodo { background: var(--navy) !important; color: var(--lime) !important }
+.hx-jesus { background: var(--violet) !important; color: var(--cream) !important }
+.hx-perfeita, .hx-raiz, .hx-trilha { background: var(--cream) !important }
 .off .hex { background: #C9CDB6 }
 .off .hex > span { background: #E7EAD8 !important; color: #9AA0B8 !important }
 

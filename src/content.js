@@ -45,6 +45,120 @@ export const UNITS = [
           { q: 'Qual sobrinho de Abraão foi morar em Sodoma?', a: ['Ló', 'Labão', 'Esaú', 'Eliézer'], ref: 'Gênesis 14:12' },
         ],
       },
+      {
+        id: 'gn-5', title: 'Isaque, Esaú e Jacó',
+        qs: [
+          { q: 'Quem foi a esposa de Isaque?', a: ['Rebeca', 'Raquel', 'Lia', 'Sara'], ref: 'Gênesis 24:67' },
+          { q: 'Quais eram os filhos gêmeos de Isaque e Rebeca?', a: ['Esaú e Jacó', 'Caim e Abel', 'Efraim e Manassés', 'Moisés e Arão'], ref: 'Gênesis 25:24-26' },
+          { q: 'Em troca de que Esaú vendeu seu direito de primogenitura?', a: ['Um prato de comida', 'Um saco de prata', 'Um rebanho de ovelhas', 'Um pedaço de terra'], ref: 'Gênesis 25:33-34' },
+          { q: 'O que Jacó viu em sonho, em Betel?', a: ['Uma escada que chegava ao céu', 'Sete vacas gordas', 'Uma sarça ardente', 'Um arco-íris'], ref: 'Gênesis 28:12' },
+          { q: 'Que novo nome Deus deu a Jacó?', a: ['Israel', 'Abraão', 'Judá', 'Benjamim'], ref: 'Gênesis 32:28' },
+        ],
+      },
+      {
+        id: 'gn-6', title: 'José no Egito',
+        qs: [
+          { q: 'Que presente de Jacó deixou os irmãos de José com inveja?', a: ['Uma túnica colorida', 'Um anel de ouro', 'Uma espada', 'Um cajado'], ref: 'Gênesis 37:3-4' },
+          { q: 'O que os irmãos fizeram com José?', a: ['Venderam-no como escravo', 'Fizeram dele seu líder', 'Mandaram-no estudar no Egito', 'Deram uma festa para ele'], ref: 'Gênesis 37:28' },
+          { q: 'Que sonho do faraó José interpretou?', a: ['Sete vacas gordas e sete magras', 'Uma escada até o céu', 'Uma estátua de ouro', 'Uma torre muito alta'], ref: 'Gênesis 41:1-4' },
+          { q: 'Que cargo José recebeu no Egito?', a: ['Governador de todo o Egito', 'Sacerdote do templo', 'Chefe dos soldados', 'Copeiro do rei'], ref: 'Gênesis 41:41' },
+          { q: 'Quem era o irmão mais novo de José?', a: ['Benjamim', 'Rúben', 'Judá', 'Levi'], ref: 'Gênesis 42:4' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'ex',
+    title: 'Êxodo',
+    subtitle: 'Da escravidão à liberdade',
+    lessons: [
+      {
+        id: 'ex-1', title: 'Moisés',
+        qs: [
+          { q: 'Onde a mãe de Moisés colocou o bebê para salvá-lo?', a: ['Num cesto, no rio Nilo', 'Numa caverna', 'Num poço', 'No templo'], ref: 'Êxodo 2:3' },
+          { q: 'Quem encontrou o bebê Moisés no rio?', a: ['A filha do faraó', 'Uma pastora de Midiã', 'A esposa de Arão', 'Um soldado egípcio'], ref: 'Êxodo 2:5-6' },
+          { q: 'Como Deus chamou Moisés no monte Horebe?', a: ['De uma sarça que ardia sem se queimar', 'Num sonho', 'Por um anjo numa caverna', 'Com um terremoto'], ref: 'Êxodo 3:2-4' },
+          { q: 'O que Deus respondeu quando Moisés perguntou o Seu nome?', a: ['EU SOU O QUE SOU', 'O Todo-Poderoso', 'O Rei dos reis', 'O Pastor de Israel'], ref: 'Êxodo 3:14' },
+          { q: 'Quem Deus enviou para falar junto com Moisés?', a: ['Arão, seu irmão', 'Josué', 'Calebe', 'Jetro'], ref: 'Êxodo 4:14-16' },
+        ],
+      },
+      {
+        id: 'ex-2', title: 'As pragas e a Páscoa',
+        qs: [
+          { q: 'Quantas pragas Deus enviou sobre o Egito?', a: ['10', '7', '12', '3'], ref: 'Êxodo 7–12' },
+          { q: 'Qual foi a primeira praga?', a: ['A água virou sangue', 'Rãs', 'Gafanhotos', 'Trevas'], ref: 'Êxodo 7:20' },
+          { q: 'O que os israelitas passaram nas portas na noite da Páscoa?', a: ['Sangue de cordeiro', 'Azeite', 'Água', 'Cinzas'], ref: 'Êxodo 12:7' },
+          { q: 'Qual foi a última praga?', a: ['A morte dos primogênitos', 'Granizo', 'Piolhos', 'Úlceras'], ref: 'Êxodo 12:29' },
+          { q: 'Que festa Deus mandou celebrar para lembrar aquela noite?', a: ['A Páscoa', 'Pentecostes', 'Tabernáculos', 'Purim'], ref: 'Êxodo 12:14' },
+        ],
+      },
+      {
+        id: 'ex-3', title: 'A travessia',
+        qs: [
+          { q: 'Que mar Deus abriu para o povo passar?', a: ['O mar Vermelho', 'O mar Morto', 'O mar da Galileia', 'O mar Mediterrâneo'], ref: 'Êxodo 14:21-22' },
+          { q: 'Como Deus guiava o povo durante o dia?', a: ['Com uma coluna de nuvem', 'Com uma estrela', 'Com o vento', 'Com um mapa'], ref: 'Êxodo 13:21' },
+          { q: 'E como Deus guiava o povo durante a noite?', a: ['Com uma coluna de fogo', 'Com a lua', 'Com tochas', 'Com uma estrela'], ref: 'Êxodo 13:21' },
+          { q: 'Que alimento Deus mandou do céu no deserto?', a: ['O maná', 'Pão de cevada', 'Figos', 'Tâmaras'], ref: 'Êxodo 16:15' },
+          { q: 'Por quantos anos o povo comeu maná no deserto?', a: ['40', '7', '12', '70'], ref: 'Êxodo 16:35' },
+        ],
+      },
+      {
+        id: 'ex-4', title: 'Os Dez Mandamentos',
+        qs: [
+          { q: 'Em que monte Deus entregou os Dez Mandamentos?', a: ['Sinai', 'Carmelo', 'Sião', 'das Oliveiras'], ref: 'Êxodo 19:20; 20:1-17' },
+          { q: 'Em que os mandamentos foram escritos?', a: ['Em tábuas de pedra', 'Em rolos de papiro', 'Em placas de ouro', 'Em peles de animais'], ref: 'Êxodo 31:18' },
+          { q: 'Honra teu pai e tua ___.', a: ['mãe', 'casa', 'terra', 'família'], ref: 'Êxodo 20:12' },
+          { q: 'Lembra-te do dia de ___, para o santificar.', a: ['sábado', 'festa', 'Páscoa', 'colheita'], ref: 'Êxodo 20:8' },
+          { q: 'O que o povo fez enquanto Moisés estava no monte?', a: ['Um bezerro de ouro', 'Uma torre', 'Um templo', 'Um muro'], ref: 'Êxodo 32:4' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'jesus',
+    title: 'Vida de Jesus',
+    subtitle: 'Os Evangelhos',
+    lessons: [
+      {
+        id: 'jesus-1', title: 'O nascimento',
+        qs: [
+          { q: 'Em que cidade Jesus nasceu?', a: ['Belém', 'Nazaré', 'Jerusalém', 'Cafarnaum'], ref: 'Mateus 2:1' },
+          { q: 'Onde o menino Jesus foi deitado ao nascer?', a: ['Numa manjedoura', 'Num berço de ouro', 'Num barco', 'No templo'], ref: 'Lucas 2:7' },
+          { q: 'Quem anunciou a Maria que ela seria mãe de Jesus?', a: ['O anjo Gabriel', 'O anjo Miguel', 'Isabel', 'O profeta Simeão'], ref: 'Lucas 1:26-31' },
+          { q: 'Quem seguiu uma estrela até o menino Jesus?', a: ['Os magos do Oriente', 'Os pastores', 'Os fariseus', 'O rei Herodes'], ref: 'Mateus 2:1-2, 9' },
+          { q: 'Em que cidade Jesus cresceu?', a: ['Nazaré', 'Belém', 'Jericó', 'Betânia'], ref: 'Lucas 2:39-40' },
+        ],
+      },
+      {
+        id: 'jesus-2', title: 'Batismo e milagres',
+        qs: [
+          { q: 'Quem batizou Jesus no rio Jordão?', a: ['João Batista', 'Pedro', 'André', 'Elias'], ref: 'Mateus 3:13-16' },
+          { q: 'Qual foi o primeiro milagre de Jesus, em Caná?', a: ['Transformou água em vinho', 'Andou sobre as águas', 'Curou um cego', 'Multiplicou pães'], ref: 'João 2:1-11' },
+          { q: 'Quantos pães Jesus usou para alimentar cinco mil homens?', a: ['5', '2', '7', '12'], ref: 'Mateus 14:17-21' },
+          { q: 'Quem Jesus ressuscitou em Betânia, irmão de Marta e Maria?', a: ['Lázaro', 'Bartimeu', 'Zaqueu', 'Nicodemos'], ref: 'João 11:1, 43-44' },
+          { q: 'Qual discípulo andou sobre as águas em direção a Jesus?', a: ['Pedro', 'João', 'Tomé', 'Judas'], ref: 'Mateus 14:29' },
+        ],
+      },
+      {
+        id: 'jesus-3', title: 'As parábolas',
+        qs: [
+          { q: 'Na parábola do semeador, o que a semente representa?', a: ['A palavra de Deus', 'O dinheiro', 'O tempo', 'Os anjos'], ref: 'Lucas 8:11' },
+          { q: 'O Reino dos céus é semelhante a um grão de ___.', a: ['mostarda', 'trigo', 'arroz', 'cevada'], ref: 'Mateus 13:31' },
+          { q: 'O que o pai fez quando o filho pródigo voltou?', a: ['Correu, abraçou e fez uma festa', 'Mandou-o embora', 'Fez dele um empregado', 'Ficou em silêncio'], ref: 'Lucas 15:20-24' },
+          { q: 'Quantas ovelhas o pastor deixou para procurar a que se perdeu?', a: ['99', '9', '50', '100'], ref: 'Lucas 15:4' },
+          { q: 'Na parábola, quem cuidou do homem ferido na estrada?', a: ['Um samaritano', 'Um sacerdote', 'Um levita', 'Um soldado romano'], ref: 'Lucas 10:33-34' },
+        ],
+      },
+      {
+        id: 'jesus-4', title: 'A cruz e a ressurreição',
+        qs: [
+          { q: 'Qual discípulo traiu Jesus?', a: ['Judas Iscariotes', 'Pedro', 'Tomé', 'Mateus'], ref: 'Mateus 26:14-16' },
+          { q: 'Quantas vezes Pedro negou Jesus?', a: ['3', '1', '7', '12'], ref: 'Mateus 26:69-75' },
+          { q: 'Em que dia Jesus ressuscitou?', a: ['No terceiro dia', 'No sétimo dia', 'No primeiro dia', 'No quadragésimo dia'], ref: '1 Coríntios 15:4' },
+          { q: 'Segundo João, quem viu Jesus ressuscitado primeiro, junto ao túmulo?', a: ['Maria Madalena', 'Pedro', 'Tomé', 'Maria, mãe de Jesus'], ref: 'João 20:14-16' },
+          { q: 'Qual discípulo só acreditou depois de ver as marcas nas mãos de Jesus?', a: ['Tomé', 'Pedro', 'João', 'Tiago'], ref: 'João 20:25-28' },
+        ],
+      },
     ],
   },
 ]
@@ -57,4 +171,6 @@ export const DAILY = [
   { q: 'O amor é ___, é benigno.', a: ['paciente', 'eterno', 'forte', 'puro'], ref: '1 Coríntios 13:4' },
   { q: 'No princípio era o ___.', a: ['Verbo', 'Pai', 'Caminho', 'Espírito'], ref: 'João 1:1' },
   { q: 'Eu sou o caminho, a verdade e a ___.', a: ['vida', 'luz', 'porta', 'paz'], ref: 'João 14:6' },
+  { q: 'Sê forte e ___; não temas.', a: ['corajoso', 'paciente', 'humilde', 'calado'], ref: 'Josué 1:9' },
+  { q: 'Confia no Senhor de todo o teu ___.', a: ['coração', 'tempo', 'caminho', 'dinheiro'], ref: 'Provérbios 3:5' },
 ]

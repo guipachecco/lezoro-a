@@ -45,4 +45,4 @@ A chave *anon* é pública por natureza; quem protege os dados é a regra RLS do
 - Com Supabase, se o mesmo usuário jogar em dois aparelhos ao mesmo tempo, o último a salvar sobrescreve o outro.
 - O progresso é gravado pelo próprio app, então um usuário experiente consegue alterar as próprias sementes. Antes de ter ranking entre usuários, a pontuação precisa ser calculada no servidor.
 - Os lembretes escolhidos na personalização ainda não disparam notificações.
-- Há uma unidade (Gênesis) com 4 lições.
+- São 3 unidades (Gênesis, Êxodo e Vida de Jesus) com 14 lições e 70 perguntas.
