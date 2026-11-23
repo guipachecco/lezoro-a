@@ -1,4 +1,5 @@
-import { addDays, badges, currentLesson, dailyIndex, levelOf, LEVELS } from './game.js'
+import { useEffect } from 'react'
+import { addDays, badges, currentLesson, dailyIndex, DEPTHS, ITEMS, levelOf, LEVELS, RARITY } from './game.js'
 import { DAILY, UNITS } from './content.js'
 import { InstallBanner } from './Install.jsx'
 import { Reminder } from './Reminder.jsx'
@@ -13,6 +14,7 @@ const WEEK = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 export function Home({ s, today, onLesson, onDaily }) {
   const lv = levelOf(s.seeds)
   const cur = currentLesson(ALL, s.done)
+  useEffect(() => { requestAnimationFrame(() => document.querySelector('.node.cur')?.scrollIntoView({ block: 'center' })) }, [])
   const dailyDone = s.dailyDone === today
   const daily = DAILY[dailyIndex(today, DAILY.length)]
   const thirsty = s.streak > 0 && s.lastDay !== today
@@ -25,7 +27,7 @@ export function Home({ s, today, onLesson, onDaily }) {
         <div className="toast"><Grao st="dormindo" lvl={lv.n} style={{ width: 52, flex: 'none' }} /><span><b>Estou com sede.</b> Faça uma lição hoje para manter {s.streak} {s.streak === 1 ? 'dia regado' : 'dias regados'}.</span></div>
       )}
       <div className="lvl">
-        <Grao st="orgulhoso" lvl={lv.n} className="lvl-m" />
+        <Grao st="orgulhoso" lvl={lv.n} gear={s.gear} className="lvl-m" />
         <div className="lvl-body">
           <b>Nível {lv.n} · {lv.name}</b>
           {lv.next
@@ -53,10 +55,10 @@ export function Home({ s, today, onLesson, onDaily }) {
                 return (
                   <div key={l.id} className="trail-row" style={{ '--x': `${OFFSETS[k % OFFSETS.length]}px` }}>
                     <button type="button" className={`node ${state}`} disabled={state === 'lock'} onClick={() => onLesson(l)} aria-label={`${l.title}${state === 'lock' ? ' (bloqueada)' : ''}`}>
-                      <Icon n={state === 'done' ? 'check' : state === 'cur' ? 'trilha' : 'cadeado'} />
+                      <Icon n={state === 'done' ? 'check' : state === 'lock' ? 'cadeado' : 'trilha'} />
                     </button>
                     <span className="node-label">{l.title}</span>
-                    {state === 'cur' && <Grao st="feliz" lvl={lv.n} className="trail-m hop" />}
+                    {state === 'cur' && <Grao st="feliz" lvl={lv.n} gear={s.gear} className="trail-m hop" />}
                   </div>
                 )
               })}
@@ -127,7 +129,7 @@ export function Badges({ s, today }) {
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-export function Profile({ s, today, onLogout }) {
+export function Profile({ s, today, onLogout, onEquip, onRestart }) {
   const lv = levelOf(s.seeds)
   const done = Object.values(s.done)
   const total = done.reduce((a, d) => a + d.total, 0)
@@ -144,7 +146,28 @@ export function Profile({ s, today, onLogout }) {
         <div>
           <b>{s.user.name}</b>
           <small>Cultivando desde {MONTHS[+m - 1]} {y}</small>
-          <span className="chip">Nível {lv.n} · {lv.name}</span>
+          <span className="chip">Nível {lv.n} · {lv.name}{s.prefs?.depth ? ` · Trilha ${DEPTHS[s.prefs.depth]}` : ''}</span>
+        </div>
+      </div>
+      <div className="card">
+        <div className="row between"><b className="h">Seu personagem</b><small className="muted">Baú a cada lição concluída</small></div>
+        <div className="row" style={{ alignItems: 'flex-start' }}>
+          <Grao st="feliz" lvl={lv.n} gear={s.gear} style={{ width: 140, flex: "none" }} />
+          <div className="inv">
+            {ITEMS.filter((it) => (s.inv || {})[it.id]).map((it) => {
+              const [rname, color] = RARITY[it.r], worn = (s.gear || {})[it.slot] === it.id, low = lv.n < it.lvl
+              const n = s.inv[it.id]
+              return it.id === 'restart'
+                ? <button key={it.id} type="button" className="item" style={{ '--rc': color }}
+                    onClick={() => window.confirm('Usar o restart? Seu Grão volta a ser semente: sementes, lições e roupas zeram, e você refaz o quiz. Os itens ficam.') && onRestart()}>
+                    <b>{it.name} ×{n}</b><small>{rname} · toque para usar</small>
+                  </button>
+                : <button key={it.id} type="button" className={`item ${worn ? 'worn' : ''}`} style={{ '--rc': color }} disabled={low} onClick={() => onEquip(it.id)}>
+                    <b>{it.name}{n > 1 ? ` ×${n}` : ''}</b><small>{rname} · {low ? `nível ${it.lvl}` : worn ? 'vestido' : 'vestir'}</small>
+                  </button>
+            })}
+            {!Object.keys(s.inv || {}).some((k) => s.inv[k]) && <small className="muted">Conclua uma lição para abrir seu primeiro baú.</small>}
+          </div>
         </div>
       </div>
       <div className="stats">

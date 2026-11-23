@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { sb } from './supabase.js'
 import { Bar, Grao, Icon, Wordmark } from './ui.jsx'
+import { PLACEMENT } from './content.js'
+import { DEPTHS, placement, shuffle } from './game.js'
 
 /** Tela aberta pelo link de "Esqueci minha senha". */
 export function NewPassword({ onDone }) {
@@ -179,6 +181,45 @@ const STEPS = [
     opts: [['07:00', 'luz', 'De manhã', 'Às 7h'], ['12:00', 'gota', 'No almoço', 'Às 12h'], ['20:00', 'lamparina', 'À noite', 'Às 20h'], ['', 'x', 'Não precisa', 'Eu me lembro sozinho']],
   },
 ]
+
+/** Quiz de nivelamento: cada pergunta tem uma chance só, sem voltar. onDone(perguntas por lição). */
+export function Placement({ onDone }) {
+  const [i, setI] = useState(0)
+  const [score, setScore] = useState(0)
+  const [opts] = useState(() => PLACEMENT.map((p) => shuffle(p.a)))
+  const depth = placement(score)
+
+  if (i === PLACEMENT.length) {
+    return (
+      <div className="screen result">
+        <Grao st="celebra" lvl={1} style={{ width: 150 }} />
+        <h2>Sua trilha: {DEPTHS[depth]}</h2>
+        <p className="muted">Você acertou {score} de {PLACEMENT.length}. Cada lição terá {depth} perguntas. Quer mudar? Só com um restart do baú!</p>
+        <button className="btn" type="button" onClick={() => onDone(depth)}>Começar minha trilha</button>
+      </div>
+    )
+  }
+  const p = PLACEMENT[i]
+  return (
+    <div className="screen onboard">
+      <div className="row">
+        <Bar pct={(i / PLACEMENT.length) * 100} />
+        <span className="step">{i + 1}/{PLACEMENT.length}</span>
+      </div>
+      <div className="ask">
+        <Grao st="pensando" lvl={1} style={{ width: 84, flex: 'none' }} />
+        <div className="bubble">{i === 0 ? 'Quiz rápido para eu saber o quanto aprofundar sua trilha. Uma chance só! ' : ''}{p.q}</div>
+      </div>
+      <div className="stack">
+        {opts[i].map((o) => (
+          <button key={o} type="button" className="choice" onClick={() => { if (o === p.a[0]) setScore(score + 1); setI(i + 1) }}>
+            <span><b>{o}</b></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export function Onboarding({ name, onDone, onBack }) {
   const [i, setI] = useState(0)

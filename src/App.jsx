@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { DAILY } from './content.js'
-import { dailyIndex, dayKey, finishDaily, finishLesson, levelOf, loseLamp, newState } from './game.js'
+import { addItem, dailyIndex, dayKey, equip, finishDaily, finishLesson, levelOf, loseLamp, newState, restart, rollChest } from './game.js'
 import { Lesson } from './Lesson.jsx'
-import { Auth, NewPassword, Onboarding, Welcome } from './Start.jsx'
+import { Auth, NewPassword, Onboarding, Placement, Welcome } from './Start.jsx'
 import { load, loadRemote, save, saveRemote } from './store.js'
 import { disableReminder } from './push.js'
 import { sb } from './supabase.js'
@@ -69,7 +69,7 @@ export default function App() {
       const before = levelOf(s.seeds).n
       const r = apply(correct, total)
       setS(r.state)
-      return { earned: r.earned, streak: r.state.streak, lvlUp: levelOf(r.state.seeds).n > before }
+      return { earned: r.earned, streak: r.state.streak, lvlUp: levelOf(r.state.seeds).n > before, item: r.item }
     }
   }
 
@@ -92,7 +92,14 @@ export default function App() {
       )
     }
     case 'onboard':
-      return <Onboarding name={draft.name} onBack={() => (sb ? logout() : setView('auth'))} onDone={(prefs) => { setS(newState(draft, prefs, today)); setView('home') }} />
+      return <Onboarding name={draft.name} onBack={() => (sb ? logout() : setView('auth'))} onDone={(prefs) => { setDraft({ ...draft, prefs }); setView('quiz') }} />
+    case 'quiz':
+      // s existe quando o quiz vem de um restart; senão é um cadastro novo
+      return <Placement onDone={(depth) => {
+        if (s) setS({ ...s, prefs: { ...s.prefs, depth } })
+        else { const { prefs, ...user } = draft; setS(newState(user, { ...prefs, depth }, today)) }
+        setView('home')
+      }} />
     case 'lesson':
     case 'daily': {
       const isDaily = view === 'daily'
@@ -106,7 +113,7 @@ export default function App() {
           onWrong={() => setS((x) => loseLamp(x))}
           onFinish={done(isDaily
             ? (c) => { const st = finishDaily(s, c > 0, today); return { state: st, earned: st.seeds - s.seeds } }
-            : (c, t) => finishLesson(s, lesson.id, c, t, today))}
+            : (c, t) => { const r = finishLesson(s, lesson.id, c, t, today), item = rollChest(); return { ...r, state: addItem(r.state, item.id), item } })}
           onExit={() => setView('home')}
         />
       )
@@ -116,7 +123,10 @@ export default function App() {
       return (
         <div className="shell">
           <main className="shell-main">
-            <Tab s={s} today={today} onDaily={() => setView('daily')} onLesson={(l) => { setLesson(l); setView('lesson') }} onLogout={logout} />
+            <Tab s={s} today={today} onDaily={() => setView('daily')} onLogout={logout}
+              onLesson={(l) => { setLesson({ ...l, qs: l.qs.slice(0, s.prefs?.depth || 5) }); setView('lesson') }}
+              onEquip={(id) => setS(equip(s, id))}
+              onRestart={() => { setS(restart(s)); setView('quiz') }} />
           </main>
           <Nav tab={view} go={setView} />
         </div>

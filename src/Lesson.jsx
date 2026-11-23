@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import { shuffle } from './game.js'
+import { RARITY, shuffle } from './game.js'
 import { Bar, Grao, Icon, fmt } from './ui.jsx'
 
 const PRAISE = ['Isso mesmo!', 'Muito bem!', 'Mais uma semente plantada!', 'Certinho!']
@@ -98,6 +98,13 @@ function Result({ end, mode, lvl, onExit }) {
         <div><Icon n="check" style={{ color: 'var(--violet)' }} /><b>{end.correct}/{end.total}</b><small>acertos</small></div>
         <div><Icon n="gota" f style={{ color: 'var(--blue)' }} /><b>{end.streak}</b><small>dias regados</small></div>
       </div>
+      {end.item && (
+        <div className="chest hop" style={{ '--rc': RARITY[end.item.r][1] }} role="status">
+          <small>Baú aberto · {RARITY[end.item.r][0]}</small>
+          <b>{end.item.name}</b>
+          {end.item.ref && <span className="muted">{end.item.ref}</span>}
+        </div>
+      )}
       <button className="btn push" type="button" onClick={onExit} autoFocus>Continuar</button>
     </div>
   )

@@ -82,3 +82,22 @@ test('conteúdo: toda pergunta tem 4 alternativas distintas e referência', () =
     assert.ok(q.ref, q.q)
   }
 })
+
+test('quiz do cadastro define a profundidade da trilha', async () => {
+  const { placement } = await import('./game.js')
+  assert.deepEqual([0, 2, 3, 4, 5, 6].map(placement), [3, 3, 4, 4, 5, 5])
+})
+
+test('baú, equipar e restart', async () => {
+  const { rollChest, addItem, equip, restart, ITEMS } = await import('./game.js')
+  assert.equal(rollChest(() => 0).r, 'comum')
+  assert.equal(rollChest(() => 0.999).id, 'camisa')
+  assert.ok(ITEMS.some((i) => i.r === 'lendario'))
+  let s = addItem(addItem(base(), 'couraca'), 'restart')
+  assert.equal(equip(s, 'couraca'), s) // nível 1 não veste lendário de nível 4
+  s = equip({ ...s, seeds: 1500 }, 'couraca')
+  assert.equal(s.gear.corpo, 'couraca')
+  s = restart(s)
+  assert.deepEqual([s.seeds, s.gear, s.inv.restart, s.inv.couraca], [0, {}, 0, 1])
+  assert.equal(restart(s), s) // sem restart, nada muda
+})

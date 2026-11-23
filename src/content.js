@@ -174,3 +174,13 @@ export const DAILY = [
   { q: 'Sê forte e ___; não temas.', a: ['corajoso', 'paciente', 'humilde', 'calado'], ref: 'Josué 1:9' },
   { q: 'Confia no Senhor de todo o teu ___.', a: ['coração', 'tempo', 'caminho', 'dinheiro'], ref: 'Provérbios 3:5' },
 ]
+
+// Quiz do cadastro (uma chance só): do mais fácil ao mais difícil. A pontuação define a trilha inicial.
+export const PLACEMENT = [
+  { q: 'Qual é o primeiro livro da Bíblia?', a: ['Gênesis', 'Êxodo', 'Salmos', 'Mateus'] },
+  { q: 'Quem foi engolido por um grande peixe?', a: ['Jonas', 'Pedro', 'Elias', 'Noé'] },
+  { q: 'Quem venceu o gigante Golias?', a: ['Davi', 'Sansão', 'Saul', 'Gideão'] },
+  { q: 'Quem levou o povo de Israel para Canaã depois de Moisés?', a: ['Josué', 'Arão', 'Calebe', 'Samuel'] },
+  { q: 'Qual era o trabalho de Mateus antes de seguir Jesus?', a: ['Cobrador de impostos', 'Pescador', 'Carpinteiro', 'Soldado'] },
+  { q: 'Em qual evangelho está a parábola do filho pródigo?', a: ['Lucas', 'Mateus', 'Marcos', 'João'] },
+]

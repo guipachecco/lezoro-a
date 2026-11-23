@@ -3,7 +3,7 @@ import { grao, icon, leafMark, plant, sym } from './art.js'
 export const Art = ({ html, className = '', style }) => (
   <span className={className} style={style} dangerouslySetInnerHTML={{ __html: html }} />
 )
-export const Grao = ({ st, lvl = 2, className = '', style }) => <Art html={grao(st, lvl)} className={`grao ${className}`} style={style} />
+export const Grao = ({ st, lvl = 2, gear, className = '', style }) => <Art html={grao(st, lvl, gear)} className={`grao ${className}`} style={style} />
 export const Icon = ({ n, f, className = '', style }) => <Art html={icon(n, f)} className={`ic ${className}`} style={style} />
 export const Plant = ({ n, className = '' }) => <Art html={plant(n)} className={`plant ${className}`} />
 export const Symbol = ({ size = 32 }) => <Art html={sym()} className="sym" style={{ width: size, height: size }} />

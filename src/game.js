@@ -108,3 +108,52 @@ export function shuffle(arr, rnd = Math.random) {
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1));[a[i], a[j]] = [a[j], a[i]] }
   return a
 }
+
+/** Profundidade da trilha pelo quiz do cadastro = perguntas por lição: 0–2 acertos → 3, 3–4 → 4, 5+ → 5. */
+export const placement = (score) => (score >= 5 ? 5 : score >= 3 ? 4 : 3)
+export const DEPTHS = { 3: 'Semente', 4: 'Raiz', 5: 'Profunda' }
+
+// Baú: [nome, cor, peso do sorteio]. Primeiro sorteia a raridade, depois um item dela.
+export const RARITY = {
+  comum: ['Comum', '#7D86A8', 55], raro: ['Raro', '#274DEA', 25], epico: ['Épico', '#6338EE', 12],
+  lendario: ['Lendário', '#D99A00', 6], ultra: ['Ultrarraro', '#E0367A', 2],
+}
+export const ITEMS = [
+  { id: 'cajado', name: 'Cajado de pastor', r: 'comum', slot: 'mao', lvl: 1 },
+  { id: 'sandalias', name: 'Sandálias de couro', r: 'comum', slot: 'pes', lvl: 1 },
+  { id: 'faixa', name: 'Faixa de linho', r: 'comum', slot: 'cintura', lvl: 1 },
+  { id: 'cinto', name: 'Cinto da verdade', r: 'raro', slot: 'cintura', lvl: 2, ref: 'Efésios 6:14' },
+  { id: 'calcado', name: 'Calçado da paz', r: 'raro', slot: 'pes', lvl: 2, ref: 'Efésios 6:15' },
+  { id: 'escudo', name: 'Escudo da fé', r: 'epico', slot: 'mao', lvl: 3, ref: 'Efésios 6:16' },
+  { id: 'capacete', name: 'Capacete da salvação', r: 'epico', slot: 'cabeca', lvl: 3, ref: 'Efésios 6:17' },
+  { id: 'restart', name: 'Restart da trilha', r: 'epico', slot: null, lvl: 1 },
+  { id: 'couraca', name: 'Couraça da justiça', r: 'lendario', slot: 'corpo', lvl: 4, ref: 'Efésios 6:14' },
+  { id: 'espada', name: 'Espada do Espírito', r: 'lendario', slot: 'mao', lvl: 5, ref: 'Efésios 6:17' },
+  { id: 'camisa', name: 'Camisa do Dorminhoco', r: 'ultra', slot: 'corpo', lvl: 1 },
+]
+export const itemById = (id) => ITEMS.find((i) => i.id === id)
+
+export function rollChest(rnd = Math.random) {
+  let x = rnd() * Object.values(RARITY).reduce((a, r) => a + r[2], 0)
+  const r = Object.keys(RARITY).find((k) => (x -= RARITY[k][2]) < 0) || 'comum'
+  const pool = ITEMS.filter((i) => i.r === r)
+  return pool[Math.floor(rnd() * pool.length)]
+}
+
+export const addItem = (s, id) => ({ ...s, inv: { ...s.inv, [id]: ((s.inv || {})[id] || 0) + 1 } })
+
+/** Veste ou tira um item. Só veste se tiver o item e o nível. */
+export function equip(s, id) {
+  const it = itemById(id), gear = { ...s.gear }
+  if (!it?.slot || !(s.inv || {})[id] || levelOf(s.seeds).n < it.lvl) return s
+  if (gear[it.slot] === id) delete gear[it.slot]
+  else gear[it.slot] = id
+  return { ...s, gear }
+}
+
+/** Gasta um restart: o Grão volta a semente (sementes, lições e roupas zeram) e o quiz é refeito. Itens ficam. */
+export function restart(s) {
+  const n = (s.inv || {}).restart || 0
+  if (!n) return s
+  return { ...s, inv: { ...s.inv, restart: n - 1 }, seeds: 0, done: {}, gear: {}, prefs: { ...s.prefs, depth: undefined } }
+}

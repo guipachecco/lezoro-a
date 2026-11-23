@@ -29,8 +29,27 @@ function crown(n, droop) {
 const star = (x, y, c) =>
   `<path d="M${x} ${y - 7}L${x + 1.8} ${y - 1.8}L${x + 7} ${y}L${x + 1.8} ${y + 1.8}L${x} ${y + 7}L${x - 1.8} ${y + 1.8}L${x - 7} ${y}L${x - 1.8} ${y - 1.8}Z" fill="${c}" stroke="${N}" stroke-width="1.6" stroke-linejoin="round"/>`
 
-/** Mascote Grão. lvl 1–6 muda a cabeça conforme o nível do usuário. */
-export function grao(st = 'feliz', lvl = 2) {
+const GOLD = '#F2C94C', STEEL = '#C9D0DE', BROWN = '#9A6233'
+const belt = (c) => `<rect x="30" y="124" width="60" height="7" rx="3.5" fill="${c}" stroke="${N}" stroke-width="3"/><rect x="54" y="121.5" width="12" height="12" rx="3" fill="${GOLD}" stroke="${N}" stroke-width="2.5"/>`
+const feet = (c) => `<path d="M36 136h18M66 136h18" stroke="${N}" stroke-width="9" stroke-linecap="round"/><path d="M36 136h18M66 136h18" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>`
+const VEST = 'M24 108Q60 100 96 108Q95 129 60 134Q25 129 24 108Z'
+// Roupas do Grão, desenhadas sobre o corpo e por baixo do rosto. Chave = id do item.
+const GEAR = {
+  cajado: `<path d="M114 136V58Q114 46 106 46Q100 46 101 53" fill="none" stroke="${N}" stroke-width="8" stroke-linecap="round"/><path d="M114 136V58Q114 46 106 46Q100 46 101 53" fill="none" stroke="${BROWN}" stroke-width="4" stroke-linecap="round"/>`,
+  sandalias: feet(BROWN),
+  calcado: feet(B),
+  faixa: belt('#fff'),
+  cinto: belt(GOLD),
+  escudo: `<path d="M1 92h26v16q0 16-13 22Q1 124 1 108Z" fill="${B}" stroke="${N}" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 98v24M7 106h14" stroke="${GOLD}" stroke-width="3.5" stroke-linecap="round"/>`,
+  capacete: `<path d="M20 68Q20 34 60 32Q100 34 100 68Q60 56 20 68Z" fill="${STEEL}" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><path d="M60 33V58" stroke="${N}" stroke-width="3"/><path d="M60 32Q66 14 82 12Q78 28 60 32Z" fill="#E0367A" stroke="${N}" stroke-width="3"/>`,
+  couraca: `<path d="${VEST}" fill="${GOLD}" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><path d="M60 103V133M36 114Q60 121 84 114" fill="none" stroke="${N}" stroke-width="2.5" stroke-linecap="round"/>`,
+  espada: `<path d="M112 34V106" stroke="${N}" stroke-width="9" stroke-linecap="round"/><path d="M112 34V106" stroke="${STEEL}" stroke-width="5" stroke-linecap="round"/><path d="M103 106h18M112 106v14" stroke="${N}" stroke-width="5" stroke-linecap="round"/><circle cx="112" cy="122" r="3.5" fill="${GOLD}" stroke="${N}" stroke-width="2"/>`,
+  // ultrarraro: camisa com a foto estampada (public/camisa.webp)
+  camisa: `<clipPath id="camisa-clip"><path d="${VEST}"/></clipPath><path d="${VEST}" fill="#fff"/><image href="/camisa.webp" x="24" y="98" width="72" height="40" preserveAspectRatio="xMidYMid slice" clip-path="url(#camisa-clip)"/><path d="${VEST}" fill="none" stroke="${N}" stroke-width="4" stroke-linejoin="round"/>`,
+}
+
+/** Mascote Grão. lvl 1–6 muda a cabeça conforme o nível do usuário; gear = { slot: idDoItem } veste roupas. */
+export function grao(st = 'feliz', lvl = 2, gear = {}) {
   let back = '', arms = '', front = '', extra = '', droop = ''
   let eyes = `<ellipse cx="46" cy="86" rx="6" ry="8" fill="${N}"/><ellipse cx="74" cy="86" rx="6" ry="8" fill="${N}"/><circle cx="48.5" cy="82.5" r="2.2" fill="#fff"/><circle cx="76.5" cy="82.5" r="2.2" fill="#fff"/>`
   let mouth = `<path d="M52 100Q60 108 68 100" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
@@ -88,22 +107,35 @@ export function grao(st = 'feliz', lvl = 2) {
 <path d="M60 130C80 130 96 118 99 100" fill="none" stroke="${L}" stroke-width="5" stroke-linecap="round" opacity=".55"/>
 <ellipse cx="36" cy="64" rx="7" ry="10" fill="#fff" opacity=".75" transform="rotate(30 36 64)"/>
 <ellipse cx="35" cy="100" rx="7" ry="4" fill="${V}" opacity=".25"/><ellipse cx="85" cy="100" rx="7" ry="4" fill="${V}" opacity=".25"/>
+${['corpo', 'cintura', 'pes', 'cabeca', 'mao'].map((k) => GEAR[gear[k]] || '').join('')}
 <g class="eyes">${eyes}</g>${mouth}${front}${extra}</svg>`
 }
 
-/** Planta por nível (1–6), usada na “Sua árvore”. */
+// Folha de oliveira: fina e comprida, com o verso prateado (C).
+const oLeaf = (x, y, a, l = 9, f = L) =>
+  `<ellipse cx="0" cy="${-l / 2}" rx="${l * 0.2}" ry="${l / 2}" transform="translate(${x} ${y}) rotate(${a})" fill="${f}" stroke="${N}" stroke-width="1.6"/>`
+// Copa em nuvens: contorno grosso por baixo e preenchimento por cima, para não riscar entre as bolas.
+const canopy = (blobs, sw = 5) =>
+  blobs.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${N}" stroke="${N}" stroke-width="${sw}"/>`).join('') +
+  blobs.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${L}"/>`).join('')
+
+/** Oliveira por nível (1–6), usada na “Sua árvore”. */
 export function plant(n) {
   let s = `<svg viewBox="0 -6 60 76" aria-hidden="true"><path d="M8 64H52" stroke="${N}" stroke-width="3" stroke-linecap="round"/>`
   if (n === 1) return s + `<ellipse cx="30" cy="57" rx="8" ry="6" fill="${C}" stroke="${N}" stroke-width="2.5"/><path d="M30 51V47" stroke="${N}" stroke-width="2.5" stroke-linecap="round"/></svg>`
-  const top = 64 - (8 + n * 7)
-  s += `<path d="M30 64V${top}" stroke="${N}" stroke-width="3" stroke-linecap="round"/>`
-  if (n >= 5) s += `<circle cx="30" cy="${top + 2}" r="${n === 6 ? 15 : 13}" fill="${L}" stroke="${N}" stroke-width="2.5"/>`
-  const k = n >= 5 ? 2 : n - 1
-  for (let i = 0; i < k; i++) {
-    const y = (n >= 5 ? top + 24 : top + 4) + i * 9, d = i % 2 ? -1 : 1, w = n > 3 ? 12 : 9
-    s += `<path d="M30 ${y}q${d * w * 0.5} -${w * 0.9} ${d * w} -${w * 0.5}q-${d * w * 0.1} ${w * 0.8} -${d * w} ${w * 0.5}z" fill="${L}" stroke="${N}" stroke-width="2" stroke-linejoin="round"/>`
-  }
-  if (n === 6) s += [[23, top], [36, top - 4], [33, top + 8], [22, top + 10]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="${V}" stroke="${N}" stroke-width="1.5"/>`).join('')
+  if (n === 2) return s + `<path d="M30 64V46" stroke="${N}" stroke-width="2.5" stroke-linecap="round"/>` + oLeaf(30, 48, -50) + oLeaf(30, 48, 50, 9, C) + oLeaf(30, 47, 0, 7) + '</svg>'
+  if (n === 3) return s + `<path d="M30 64Q28 50 31 34" fill="none" stroke="${N}" stroke-width="3" stroke-linecap="round"/>` +
+    oLeaf(29, 52, -60) + oLeaf(29, 52, 60, 9, C) + oLeaf(30, 43, -55, 10, C) + oLeaf(30, 43, 55) + oLeaf(31, 35, -10, 8) + '</svg>'
+  if (n === 4) return s + `<path d="M30 64Q29 52 31 44M31 46Q24 40 20 34M31 46Q38 40 41 32" fill="none" stroke="${N}" stroke-width="3.5" stroke-linecap="round"/>` +
+    canopy([[19, 30, 7], [30, 26, 9], [41, 29, 7]], 4) + oLeaf(24, 26, -40, 7, C) + oLeaf(36, 25, 40, 7, C) + '</svg>'
+  // Árvore adulta: tronco grosso e retorcido, com nó, e copa larga e baixa como a oliveira.
+  const big = n === 6
+  s += `<path d="M22 64C26 58 25 52 28 47C30 43 26 39 25 33L30 31C31 37 34 40 33 45C32 50 36 57 39 64Z" fill="${N}"/>` +
+    `<path d="M28 33Q20 28 15 22M31 32Q40 27 45 20" fill="none" stroke="${N}" stroke-width="3.5" stroke-linecap="round"/>` +
+    `<ellipse cx="31" cy="52" rx="1.6" ry="3" fill="${C}" opacity=".7"/>` +
+    canopy(big ? [[12, 20, 9], [24, 13, 11], [37, 12, 11], [49, 19, 9], [30, 22, 10]] : [[14, 21, 8], [26, 15, 10], [38, 15, 10], [47, 21, 7], [30, 23, 8]]) +
+    [[16, 18, -50], [27, 11, -15], [38, 11, 20], [46, 17, 55], [31, 21, 5]].map(([x, y, a]) => oLeaf(x, y, a, 7, C)).join('')
+  if (big) s += [[18, 24], [33, 16], [43, 23], [24, 18], [10, 17]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="3.4" fill="${V}" stroke="${N}" stroke-width="1.4"/>`).join('')
   return s + '</svg>'
 }
 
