@@ -1,5 +1,6 @@
 import { addDays, badges, currentLesson, dailyIndex, levelOf, LEVELS } from './game.js'
 import { DAILY, UNITS } from './content.js'
+import { InstallBanner } from './Install.jsx'
 import { Reminder } from './Reminder.jsx'
 import { sb } from './supabase.js'
 import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
@@ -19,6 +20,7 @@ export function Home({ s, today, onLesson, onDaily }) {
   return (
     <div className="screen home">
       <Counters s={s} />
+      <InstallBanner />
       {thirsty && (
         <div className="toast"><Grao st="dormindo" lvl={lv.n} style={{ width: 52, flex: 'none' }} /><span><b>Estou com sede.</b> Faça uma lição hoje para manter {s.streak} {s.streak === 1 ? 'dia regado' : 'dias regados'}.</span></div>
       )}

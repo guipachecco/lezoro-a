@@ -77,6 +77,30 @@ h1, h2, h3 { font-family: var(--display); color: var(--navy); letter-spacing: -.
 .chip-state { font: 800 12px var(--display); color: var(--muted); background: var(--paper); border-radius: 99px; padding: 3px 10px }
 .chip-state.on { background: var(--cream); color: var(--navy) }
 .time { font: 800 18px var(--display); color: var(--navy); border: 2px solid var(--line); border-radius: 12px; padding: 6px 10px; background: #fff }
+.install { display: flex; align-items: center; gap: 10px; background: var(--cream); border: 2px solid var(--navy); border-radius: 18px; padding: 10px 8px 10px 12px }
+.install > .ic { width: 28px; height: 28px; color: var(--navy) }
+.install b { display: block; font: 800 14px var(--display); color: var(--navy) }
+.install small { display: block; font-size: 11px; color: var(--muted) }
+.install > span { flex: 1; min-width: 0 }
+.install .btn { width: auto; flex: none }
+.install-x { border: 0; background: none; color: var(--muted); padding: 4px; display: grid; place-items: center }
+.sheet-bg { position: fixed; inset: 0; background: rgba(10, 26, 94, .45); display: flex; align-items: flex-end; justify-content: center; z-index: 20; animation: fade .2s }
+.sheet { position: relative; width: 100%; max-width: 460px; max-height: 92dvh; overflow-y: auto; background: var(--paper); border-radius: 26px 26px 0 0;
+  padding: 22px max(20px, env(safe-area-inset-left, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px); display: flex; flex-direction: column; gap: 16px; animation: up-sheet .25s ease-out }
+.sheet h2 { font-size: 22px }
+.sheet-x { position: absolute; top: 14px; right: 14px; border: 0; background: #fff; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: var(--muted) }
+.perks { list-style: none; margin: 0; padding: 12px 14px; background: #fff; border-radius: 16px; border: 2px solid var(--line); display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600 }
+.perks li { display: flex; align-items: center; gap: 10px }
+.perks .ic { color: var(--violet); width: 20px; height: 20px }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px }
+.steps li { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 12px }
+.steps b { display: block; font: 800 15px var(--display); color: var(--navy) }
+.steps small { display: block; font-size: 12px; color: var(--muted); line-height: 1.35 }
+.step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: var(--lime); display: grid; place-items: center; font: 800 13px var(--display); flex: none }
+.step-ic { width: 44px; height: 44px; border-radius: 12px; background: var(--cream); color: var(--blue); display: grid; place-items: center; flex: none }
+.step-ic .ic { width: 26px; height: 26px }
+@keyframes up-sheet { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
 .splash { flex: 1; background: var(--navy); display: grid; place-items: center }
 .logout { align-self: center; display: flex; align-items: center; gap: 6px; border: 0; background: none; color: var(--muted); font-weight: 700; padding: 8px }
 .hint { font-size: 12px; color: var(--muted); text-align: center }

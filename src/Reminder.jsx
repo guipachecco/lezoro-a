@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { currentReminder, disableReminder, enableReminder, pushSupported } from './push.js'
+import { InstallButton, isInstalled, platform } from './Install.jsx'
 import { Icon } from './ui.jsx'
-
-const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent)
-const installed = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
 
 /** Cartão do Perfil para ligar, mudar ou desligar o lembrete diário deste aparelho. */
 export function Reminder({ suggested }) {
@@ -43,10 +41,11 @@ export function Reminder({ suggested }) {
       <div className="card reminder">
         <b className="h"><Icon n="lamparina" /> Lembrete diário</b>
         <p className="muted small">
-          {isIOS() && !installed()
-            ? 'No iPhone, adicione o Lezoro\'a à Tela de Início (compartilhar > Adicionar à Tela de Início) e abra por lá para receber lembretes.'
+          {platform() === 'ios' && !isInstalled()
+            ? 'No iPhone, os lembretes só chegam com o Lezoro\'a instalado na Tela de Início. Instale e abra pelo ícone.'
             : 'Este navegador não recebe lembretes. Tente pelo Chrome no Android ou pelo app instalado no iPhone.'}
         </p>
+        <InstallButton />
       </div>
     )
   }
