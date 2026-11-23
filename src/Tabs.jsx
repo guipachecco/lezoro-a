@@ -1,5 +1,6 @@
 import { addDays, badges, currentLesson, dailyIndex, levelOf, LEVELS } from './game.js'
 import { DAILY, UNITS } from './content.js'
+import { Reminder } from './Reminder.jsx'
 import { sb } from './supabase.js'
 import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
 
@@ -170,6 +171,7 @@ export function Profile({ s, today, onLogout }) {
           ))}
         </div>
       </div>
+      {sb && <Reminder suggested={s.prefs?.reminder} />}
       {sb
         ? <button type="button" className="logout" onClick={onLogout}><Icon n="sair" />Sair da conta</button>
         : <p className="hint muted center">Modo local: seu progresso fica salvo só neste aparelho.</p>}

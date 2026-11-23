@@ -4,6 +4,7 @@ import { dailyIndex, dayKey, finishDaily, finishLesson, levelOf, loseLamp, newSt
 import { Lesson } from './Lesson.jsx'
 import { Auth, NewPassword, Onboarding, Welcome } from './Start.jsx'
 import { load, loadRemote, save, saveRemote } from './store.js'
+import { disableReminder } from './push.js'
 import { sb } from './supabase.js'
 import { Badges, Bible, Home, Profile } from './Tabs.jsx'
 import { Grao, Nav } from './ui.jsx'
@@ -54,6 +55,8 @@ export default function App() {
   useEffect(() => { window.scrollTo(0, 0) }, [view])
 
   async function logout() {
+    // sem isso, o próximo usuário deste aparelho receberia os lembretes de quem saiu
+    try { await disableReminder() } catch { /* sem internet: a função apaga a inscrição quando o envio falhar */ }
     if (sb) await sb.auth.signOut()
     save(null)
     setS(null); setUid(null); setView('welcome')
