@@ -1,0 +1,162 @@
+import { addDays, badges, currentLesson, dailyIndex, levelOf, LEVELS } from './game.js'
+import { DAILY, UNITS } from './content.js'
+import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
+
+const unit = UNITS[0]
+const OFFSETS = [0, -48, -16, 36, 8]
+const WEEK = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
+
+export function Home({ s, today, onLesson, onDaily }) {
+  const lv = levelOf(s.seeds)
+  const cur = currentLesson(unit.lessons, s.done)
+  const dailyDone = s.dailyDone === today
+  const daily = DAILY[dailyIndex(today, DAILY.length)]
+  const thirsty = s.streak > 0 && s.lastDay !== today
+
+  return (
+    <div className="screen home">
+      <Counters s={s} />
+      {thirsty && (
+        <div className="toast"><Grao st="dormindo" lvl={lv.n} style={{ width: 52, flex: 'none' }} /><span><b>Estou com sede.</b> Faça uma lição hoje para manter {s.streak} {s.streak === 1 ? 'dia regado' : 'dias regados'}.</span></div>
+      )}
+      <div className="lvl">
+        <Grao st="orgulhoso" lvl={lv.n} className="lvl-m" />
+        <div className="lvl-body">
+          <b>Nível {lv.n} · {lv.name}</b>
+          {lv.next
+            ? <><Bar pct={((s.seeds - lv.min) / (lv.next.min - lv.min)) * 100} h={8} /><small>{fmt(s.seeds)} / {fmt(lv.next.min)} sementes até {lv.next.name}</small></>
+            : <small>Sua árvore já dá frutos. Gálatas 5:22</small>}
+        </div>
+      </div>
+      <div className="daily">
+        <span className="lbl" style={{ color: 'var(--cream)' }}><Icon n="luz" /> Desafio do dia</span>
+        <b>{dailyDone ? 'Feito! Volte amanhã para outro versículo.' : `Complete ${daily.ref}`}</b>
+        <div className="row between">
+          <span className="ct" style={{ color: 'var(--lime)' }}>+20 sementes</span>
+          {!dailyDone && <button className="btn inline small" type="button" onClick={onDaily}>Começar</button>}
+        </div>
+      </div>
+      <div className="unit"><Icon n="biblia" /><div><b>Unidade 1 · {unit.title}</b><small>{unit.subtitle}</small></div></div>
+      <div className="trail">
+        {unit.lessons.map((l, i) => {
+          const state = s.done[l.id] ? 'done' : i === cur ? 'cur' : 'lock'
+          return (
+            <div key={l.id} className="trail-row" style={{ '--x': `${OFFSETS[i % OFFSETS.length]}px` }}>
+              <button type="button" className={`node ${state}`} disabled={state === 'lock'} onClick={() => onLesson(l)} aria-label={`${l.title}${state === 'lock' ? ' (bloqueada)' : ''}`}>
+                <Icon n={state === 'done' ? 'check' : state === 'cur' ? 'trilha' : 'cadeado'} />
+              </button>
+              <span className="node-label">{l.title}</span>
+              {state === 'cur' && <Grao st="feliz" lvl={lv.n} className="trail-m hop" />}
+            </div>
+          )
+        })}
+        {cur === unit.lessons.length && <p className="muted center">Você concluiu Gênesis! Novas unidades chegam em breve.</p>}
+      </div>
+    </div>
+  )
+}
+
+export function Bible({ s }) {
+  return (
+    <div className="screen center-col">
+      <Grao st="lendo" lvl={levelOf(s.seeds).n} style={{ width: 150 }} />
+      <h2>Leitura da Bíblia</h2>
+      <p className="muted">Em breve você vai ler os capítulos de cada lição aqui, com marcações e versículos favoritos.</p>
+      <div className="stack" style={{ width: '100%' }}>
+        {unit.lessons.map((l) => (
+          <div key={l.id} className="choice static">
+            <Icon n="biblia" />
+            <span><b>{l.title}</b><small>{l.qs.map((q) => q.ref.replace('Gênesis ', 'Gn ')).slice(0, 3).join(' · ')}</small></span>
+            {s.done[l.id] && <Icon n="check" style={{ color: 'var(--lime-deep)', marginLeft: 'auto' }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const lastWeek = (today) => Array.from({ length: 7 }, (_, k) => addDays(today, k - 6))
+const dow = (key) => { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d).getDay() }
+
+export function Badges({ s, today }) {
+  const list = badges(s, unit.lessons.map((l) => l.id))
+  const lv = levelOf(s.seeds)
+  return (
+    <div className="screen">
+      <div className="row between"><h1 className="title">Conquistas</h1><small className="muted">{list.filter((b) => b.on).length} de {list.length} selos</small></div>
+      <div className="streak">
+        <div className="row">
+          <Grao st={s.streak ? 'sequencia' : 'dormindo'} lvl={lv.n} style={{ width: 62, flex: 'none' }} />
+          <div><b>{s.streak} {s.streak === 1 ? 'dia regado' : 'dias regados'}</b><small>{s.best > s.streak ? `Seu recorde é ${s.best}. Faltam ${s.best - s.streak}!` : s.streak ? 'Este é o seu recorde!' : 'Faça uma lição para começar.'}</small></div>
+        </div>
+        <div className="week">
+          {lastWeek(today).map((d) => {
+            const on = s.days.includes(d)
+            return <span key={d}><Icon n="gota" f={on} style={{ color: on ? 'var(--lime)' : 'rgba(255,255,255,.45)' }} />{WEEK[dow(d)]}</span>
+          })}
+        </div>
+      </div>
+      <div className="badges">
+        {list.map((b) => (
+          <figure key={b.id} className={b.on ? '' : 'off'}>
+            <div className="hex"><span className={`hx-${b.id}`}><Icon n={b.on ? b.icon : 'cadeado'} /></span></div>
+            {b.title}
+            {!b.on && <small>{b.progress}</small>}
+          </figure>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+export function Profile({ s, today }) {
+  const lv = levelOf(s.seeds)
+  const done = Object.values(s.done)
+  const total = done.reduce((a, d) => a + d.total, 0)
+  const hits = done.reduce((a, d) => a + d.correct, 0)
+  const week = lastWeek(today).map((d) => [d, (s.log || {})[d] || 0])
+  const max = Math.max(60, ...week.map(([, v]) => v))
+  const [y, m] = (s.since || today).split('-')
+  const initials = s.user.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+
+  return (
+    <div className="screen profile">
+      <div className="profile-head">
+        <span className="avatar">{initials}</span>
+        <div>
+          <b>{s.user.name}</b>
+          <small>Cultivando desde {MONTHS[+m - 1]} {y}</small>
+          <span className="chip">Nível {lv.n} · {lv.name}</span>
+        </div>
+      </div>
+      <div className="stats">
+        <div className="stat"><Icon n="gota" f style={{ color: 'var(--blue)' }} /><div><b>{s.days.length}</b><small>dias regados</small></div></div>
+        <div className="stat"><Icon n="semente" f style={{ color: 'var(--lime-deep)' }} /><div><b>{fmt(s.seeds)}</b><small>sementes</small></div></div>
+        <div className="stat"><Icon n="check" style={{ color: 'var(--violet)' }} /><div><b>{total ? Math.round((hits / total) * 100) : 0}%</b><small>de acertos</small></div></div>
+        <div className="stat"><Icon n="biblia" style={{ color: 'var(--navy)' }} /><div><b>{done.length}</b><small>lições concluídas</small></div></div>
+      </div>
+      <div className="card">
+        <div className="row between"><b className="h">Esta semana</b><small className="muted">{fmt(week.reduce((a, [, v]) => a + v, 0))} sementes</small></div>
+        <div className="chart">
+          {week.map(([d, v]) => (
+            <div key={d} className={d === today ? 'hi' : ''} title={`${v} sementes`}>
+              <i style={{ height: `${(v / max) * 100}%` }} />{WEEK[dow(d)]}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="card">
+        <b className="h">Sua árvore</b>
+        <div className="tree">
+          {LEVELS.map((l) => (
+            <div key={l.n} className={l.n === lv.n ? 'on' : l.n > lv.n ? 'later' : ''}>
+              <Plant n={l.n} /><span>{l.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
