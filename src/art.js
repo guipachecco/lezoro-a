@@ -147,6 +147,7 @@ const IC = {
   biblia: '<path d="M6 3h12v15H7.5A2.5 2.5 0 0 0 5 20.5V4a1 1 0 0 1 1-1z"/><path d="M5 20.5A2.5 2.5 0 0 0 7.5 23H18v-5"/><path d="M11.5 6.5v7M9 9h5"/>',
   medalha: '<circle cx="12" cy="15" r="6"/><path d="M8.5 10 6 2h4l2 4 2-4h4l-2.5 8"/>',
   perfil: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  amigos: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.8 2.9-6 6.5-6s6.5 2.2 6.5 6"/><circle cx="17" cy="9" r="2.8"/><path d="M17 14c2.8 0 4.5 1.8 4.5 4.5"/>',
   luz: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   cadeado: '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',

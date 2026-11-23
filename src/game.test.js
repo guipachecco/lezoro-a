@@ -101,3 +101,18 @@ test('baú, equipar e restart', async () => {
   assert.deepEqual([s.seeds, s.gear, s.inv.restart, s.inv.couraca], [0, {}, 0, 1])
   assert.equal(restart(s), s) // sem restart, nada muda
 })
+
+test('desafios: perguntas válidas em todos os modos, ranking e remover item', async () => {
+  const { buildChallenge, MODES, rank, removeItem, addItem } = await import('./game.js')
+  const { VERSES } = await import('./content.js')
+  for (const mode of Object.keys(MODES)) {
+    const qs = buildChallenge(mode, UNITS, VERSES)
+    assert.equal(qs.length, Math.min(MODES[mode].n, mode === 'onde' || mode === 'termine' ? VERSES.length : 99))
+    for (const q of qs) assert.equal(new Set(q.a).size, 4, `${mode}: ${q.q}`)
+  }
+  assert.deepEqual(rank([{ id: 'a', correct: 3, ms: 9 }, { id: 'b', correct: 5, ms: 20 }, { id: 'c', correct: 5, ms: 10 }]).map((r) => r.id), ['c', 'b', 'a'])
+  let s = { ...addItem(base(), 'escudo'), gear: { mao: 'escudo' } }
+  s = removeItem(s, 'escudo')
+  assert.deepEqual([s.inv.escudo, s.gear], [0, {}])
+  assert.equal(removeItem(s, 'escudo'), s)
+})

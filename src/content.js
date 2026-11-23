@@ -184,3 +184,28 @@ export const PLACEMENT = [
   { q: 'Qual era o trabalho de Mateus antes de seguir Jesus?', a: ['Cobrador de impostos', 'Pescador', 'Carpinteiro', 'Soldado'] },
   { q: 'Em qual evangelho está a parábola do filho pródigo?', a: ['Lucas', 'Mateus', 'Marcos', 'João'] },
 ]
+
+// Versículos conhecidos para os desafios "Onde está o versículo?" e "Termine o versículo".
+// start | end separam o começo do final do versículo.
+export const VERSES = [
+  ['João 3:16', 'Porque Deus amou o mundo de tal maneira', 'que deu o seu Filho unigênito'],
+  ['Salmos 23:1', 'O Senhor é o meu pastor;', 'nada me faltará'],
+  ['Filipenses 4:13', 'Tudo posso', 'naquele que me fortalece'],
+  ['Gênesis 1:1', 'No princípio, Deus criou', 'os céus e a terra'],
+  ['João 14:6', 'Eu sou o caminho,', 'a verdade e a vida'],
+  ['Provérbios 3:5', 'Confia no Senhor de todo o teu coração', 'e não te estribes no teu próprio entendimento'],
+  ['Romanos 8:28', 'Todas as coisas cooperam para o bem', 'daqueles que amam a Deus'],
+  ['Mateus 6:33', 'Buscai primeiro o Reino de Deus', 'e a sua justiça'],
+  ['Isaías 40:31', 'Os que esperam no Senhor', 'renovam as suas forças'],
+  ['Josué 1:9', 'Sê forte e corajoso;', 'não temas, nem te espantes'],
+  ['Salmos 119:105', 'Lâmpada para os meus pés é a tua palavra', 'e luz para o meu caminho'],
+  ['Mateus 11:28', 'Vinde a mim, todos os que estais cansados e oprimidos,', 'e eu vos aliviarei'],
+  ['Romanos 6:23', 'O salário do pecado é a morte,', 'mas o dom gratuito de Deus é a vida eterna'],
+  ['1 João 4:8', 'Aquele que não ama não conhece a Deus,', 'porque Deus é amor'],
+  ['Hebreus 11:1', 'A fé é a certeza das coisas que se esperam', 'e a convicção de fatos que não se veem'],
+  ['Salmos 46:1', 'Deus é o nosso refúgio e fortaleza,', 'socorro bem presente na angústia'],
+  ['Mateus 5:14', 'Vós sois a luz do mundo;', 'não se pode esconder uma cidade edificada sobre um monte'],
+  ['Efésios 2:8', 'Pela graça sois salvos, por meio da fé;', 'e isto não vem de vós, é dom de Deus'],
+  ['Gálatas 5:22', 'O fruto do Espírito é:', 'amor, alegria, paz, paciência, benignidade'],
+  ['1 Coríntios 13:4', 'O amor é paciente,', 'o amor é bondoso'],
+].map(([ref, start, end]) => ({ ref, start, end }))

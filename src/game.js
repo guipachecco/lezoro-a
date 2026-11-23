@@ -157,3 +157,38 @@ export function restart(s) {
   if (!n) return s
   return { ...s, inv: { ...s.inv, restart: n - 1 }, seeds: 0, done: {}, gear: {}, prefs: { ...s.prefs, depth: undefined } }
 }
+
+/** Tira uma unidade do item; se acabou, também tira do corpo do Grão. */
+export function removeItem(s, id) {
+  const n = (s.inv || {})[id] || 0
+  if (!n) return s
+  const gear = { ...s.gear }
+  if (n === 1) for (const k of Object.keys(gear)) if (gear[k] === id) delete gear[k]
+  return { ...s, inv: { ...s.inv, [id]: n - 1 }, gear }
+}
+
+// Desafios ao vivo entre amigos. secs = tempo total da partida (só no quiz rápido).
+export const MODES = {
+  quiz: { name: 'Quiz bíblico', sub: '8 perguntas das lições', n: 8 },
+  rapido: { name: 'Quiz rápido', sub: 'Quem acerta mais em 60 segundos', n: 20, secs: 60 },
+  onde: { name: 'Onde está o versículo?', sub: 'Acerte a referência', n: 8 },
+  termine: { name: 'Termine o versículo', sub: 'Escolha o final certo', n: 8 },
+}
+export const XP_WIN = 50, XP_PLAY = 10, MAX_PLAYERS = 8
+
+/** Perguntas da partida, no mesmo formato das lições (a[0] é a certa). Quem cria a sala sorteia e manda para todos. */
+export function buildChallenge(mode, units, verses, rnd = Math.random) {
+  const n = MODES[mode].n
+  if (mode === 'quiz' || mode === 'rapido') {
+    return shuffle(units.flatMap((u) => u.lessons.flatMap((l) => l.qs)), rnd).slice(0, n).map(({ q, a }) => ({ q, a }))
+  }
+  return shuffle(verses, rnd).slice(0, n).map((v) => {
+    const others = shuffle(verses.filter((o) => o !== v), rnd).slice(0, 3)
+    return mode === 'onde'
+      ? { q: `“${v.start} ${v.end}”`, a: [v.ref, ...others.map((o) => o.ref)] }
+      : { q: `${v.start} …`, a: [v.end, ...others.map((o) => o.end)] }
+  })
+}
+
+/** Ranking: mais acertos primeiro; empate, quem foi mais rápido. */
+export const rank = (results) => [...results].sort((x, y) => y.correct - x.correct || x.ms - y.ms)

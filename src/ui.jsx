@@ -27,7 +27,7 @@ export function Counters({ s }) {
   )
 }
 
-const TABS = [['home', 'trilha', 'Trilha'], ['bible', 'biblia', 'Bíblia'], ['badges', 'medalha', 'Conquistas'], ['profile', 'perfil', 'Perfil']]
+const TABS = [['home', 'trilha', 'Trilha'], ['bible', 'biblia', 'Bíblia'], ['friends', 'amigos', 'Amigos'], ['badges', 'medalha', 'Conquistas'], ['profile', 'perfil', 'Perfil']]
 export function Nav({ tab, go }) {
   return (
     <nav className="nav">
