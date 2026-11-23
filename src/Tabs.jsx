@@ -30,6 +30,7 @@ export function Home({ s, today, onLesson, onDaily }) {
         <Grao st="orgulhoso" lvl={lv.n} gear={s.gear} className="lvl-m" />
         <div className="lvl-body">
           <b>Nível {lv.n} · {lv.name}</b>
+          {s.prefs?.depth && <small className="depth">Trilha {DEPTHS[s.prefs.depth]} · {s.prefs.depth} perguntas por lição</small>}
           {lv.next
             ? <><Bar pct={((s.seeds - lv.min) / (lv.next.min - lv.min)) * 100} h={8} /><small>{fmt(s.seeds)} / {fmt(lv.next.min)} sementes até {lv.next.name}</small></>
             : <small>Sua árvore já dá frutos. Gálatas 5:22</small>}

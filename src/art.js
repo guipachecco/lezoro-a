@@ -31,7 +31,7 @@ const star = (x, y, c) =>
 
 const GOLD = '#F2C94C', STEEL = '#C9D0DE', BROWN = '#9A6233'
 const belt = (c) => `<rect x="30" y="124" width="60" height="7" rx="3.5" fill="${c}" stroke="${N}" stroke-width="3"/><rect x="54" y="121.5" width="12" height="12" rx="3" fill="${GOLD}" stroke="${N}" stroke-width="2.5"/>`
-const feet = (c) => `<path d="M36 136h18M66 136h18" stroke="${N}" stroke-width="9" stroke-linecap="round"/><path d="M36 136h18M66 136h18" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>`
+const feet = (c) => `<path d="M34 136h20M66 136h20" stroke="${N}" stroke-width="9" stroke-linecap="round"/><path d="M34 136h20M66 136h20" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>`
 const VEST = 'M24 108Q60 100 96 108Q95 129 60 134Q25 129 24 108Z'
 // Roupas do Grão, desenhadas sobre o corpo e por baixo do rosto. Chave = id do item.
 const GEAR = {
@@ -51,9 +51,10 @@ const GEAR = {
 /** Mascote Grão. lvl 1–6 muda a cabeça conforme o nível do usuário; gear = { slot: idDoItem } veste roupas. */
 export function grao(st = 'feliz', lvl = 2, gear = {}) {
   let back = '', arms = '', front = '', extra = '', droop = ''
-  let eyes = `<ellipse cx="46" cy="86" rx="6" ry="8" fill="${N}"/><ellipse cx="74" cy="86" rx="6" ry="8" fill="${N}"/><circle cx="48.5" cy="82.5" r="2.2" fill="#fff"/><circle cx="76.5" cy="82.5" r="2.2" fill="#fff"/>`
+  const big = (cy) => [44, 76].map((x) => `<ellipse cx="${x}" cy="${cy}" rx="9" ry="10.4" fill="${N}"/><circle cx="${x + 3.2}" cy="${cy - 3.6}" r="3.4" fill="#fff"/><circle cx="${x - 3.2}" cy="${cy + 3.6}" r="1.5" fill="#fff"/>`).join('')
+  let eyes = big(85)
   let mouth = `<path d="M52 100Q60 108 68 100" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
-  const closed = `<path d="M39 89Q46 80 53 89M67 89Q74 80 81 89" fill="none" stroke="${N}" stroke-width="4.5" stroke-linecap="round"/>`
+  const closed = `<path d="M35 89Q44 78 53 89M67 89Q76 78 85 89" fill="none" stroke="${N}" stroke-width="4.5" stroke-linecap="round"/>`
   const open = `<path d="M49 98Q60 116 71 98Z" fill="${N}" stroke="${N}" stroke-width="3" stroke-linejoin="round"/><path d="M54 105Q60 110 66 105" fill="${V}" opacity=".7"/>`
   const hand = (x, y) => `<circle cx="${x}" cy="${y}" r="5.5" fill="${C}" stroke="${N}" stroke-width="3.5"/>`
   const wave = `<path d="M100 92Q114 84 112 70" fill="none" stroke="${N}" stroke-width="5" stroke-linecap="round"/>` + hand(112, 68)
@@ -66,7 +67,7 @@ export function grao(st = 'feliz', lvl = 2, gear = {}) {
       break
     case 'encoraja':
       droop = 'transform="rotate(48 60 24)"'
-      extra = `<path d="M39 76L52 72M81 76L68 72" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
+      extra = `<path d="M34 72L50 68M86 72L70 68" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
       mouth = `<path d="M53 102Q60 106 67 102" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
       arms = `<path d="M100 96Q114 90 114 76" fill="none" stroke="${N}" stroke-width="5" stroke-linecap="round"/>` + hand(114, 74)
       break
@@ -76,21 +77,21 @@ export function grao(st = 'feliz', lvl = 2, gear = {}) {
       extra = `<path d="M86 0s-5 6-5 9a5 5 0 0 0 10 0c0-3-5-9-5-9z" fill="${B}" stroke="${N}" stroke-width="2"/>`
       break
     case 'pensando':
-      eyes = `<ellipse cx="46" cy="84" rx="6" ry="8" fill="${N}"/><ellipse cx="74" cy="84" rx="6" ry="8" fill="${N}"/><circle cx="48" cy="79" r="2.4" fill="#fff"/><circle cx="76" cy="79" r="2.4" fill="#fff"/>`
+      eyes = big(82)
       mouth = `<path d="M53 104Q58 101 67 103" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
       arms = `<path d="M22 108Q36 122 50 114" fill="none" stroke="${N}" stroke-width="5" stroke-linecap="round"/>`
       extra = `<circle cx="104" cy="44" r="4" fill="${C}" stroke="${N}" stroke-width="2.5"/><circle cx="112" cy="32" r="6" fill="${C}" stroke="${N}" stroke-width="2.5"/>`
       break
     case 'dormindo':
       droop = 'transform="rotate(40 60 24)"'
-      eyes = `<path d="M39 88Q46 93 53 88M67 88Q74 93 81 88" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
+      eyes = `<path d="M35 88Q44 94 53 88M67 88Q76 94 85 88" fill="none" stroke="${N}" stroke-width="4" stroke-linecap="round"/>`
       mouth = `<ellipse cx="60" cy="104" rx="4" ry="5" fill="${N}"/>`
       extra = `<text x="92" y="44" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="20" fill="${B}">z</text><text x="104" y="28" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="14" fill="${B}">z</text>`
       break
     case 'surpreso':
-      eyes = `<circle cx="46" cy="86" r="8.5" fill="#fff" stroke="${N}" stroke-width="3.5"/><circle cx="74" cy="86" r="8.5" fill="#fff" stroke="${N}" stroke-width="3.5"/><circle cx="46" cy="87" r="4.5" fill="${N}"/><circle cx="74" cy="87" r="4.5" fill="${N}"/>`
+      eyes = `<circle cx="44" cy="85" r="10" fill="#fff" stroke="${N}" stroke-width="3.5"/><circle cx="76" cy="85" r="10" fill="#fff" stroke="${N}" stroke-width="3.5"/><circle cx="44" cy="86" r="5" fill="${N}"/><circle cx="76" cy="86" r="5" fill="${N}"/>`
       mouth = `<ellipse cx="60" cy="107" rx="5" ry="6.5" fill="${N}"/>`
-      extra = `<path d="M37 70Q45 65 53 70M67 70Q75 65 83 70" fill="none" stroke="${N}" stroke-width="3.5" stroke-linecap="round"/>` + star(14, 40, L) + star(108, 46, V)
+      extra = `<path d="M34 68Q44 62 54 68M66 68Q76 62 86 68" fill="none" stroke="${N}" stroke-width="3.5" stroke-linecap="round"/>` + star(14, 40, L) + star(108, 46, V)
       break
     case 'orgulhoso':
       eyes = closed
@@ -102,11 +103,12 @@ export function grao(st = 'feliz', lvl = 2, gear = {}) {
       arms = wave
   }
   const tall = lvl >= 4
-  return `<svg viewBox="${tall ? '0 -28 124 168' : '0 -10 124 150'}" role="img" aria-label="Grão, o mascote">${back}${crown(lvl, droop)}${arms}
-<path d="M60 40C88 40 104 66 104 92C104 118 84 134 60 134C36 134 16 118 16 92C16 66 32 40 60 40Z" fill="${C}" stroke="${N}" stroke-width="5"/>
-<path d="M60 130C80 130 96 118 99 100" fill="none" stroke="${L}" stroke-width="5" stroke-linecap="round" opacity=".55"/>
-<ellipse cx="36" cy="64" rx="7" ry="10" fill="#fff" opacity=".75" transform="rotate(30 36 64)"/>
-<ellipse cx="35" cy="100" rx="7" ry="4" fill="${V}" opacity=".25"/><ellipse cx="85" cy="100" rx="7" ry="4" fill="${V}" opacity=".25"/>
+  return `<svg viewBox="${tall ? '0 -28 124 172' : '0 -10 124 154'}" role="img" aria-label="Grão, o mascote">${back}${crown(lvl, droop)}${arms}
+<ellipse cx="44" cy="135" rx="11" ry="6" fill="${N}"/><ellipse cx="76" cy="135" rx="11" ry="6" fill="${N}"/>
+<path d="M60 36C94 36 108 66 108 94C108 122 88 134 60 134C32 134 12 122 12 94C12 66 26 36 60 36Z" fill="${C}" stroke="${N}" stroke-width="5"/>
+<ellipse cx="60" cy="113" rx="26" ry="15" fill="${L}" opacity=".45"/>
+<ellipse cx="34" cy="60" rx="7" ry="11" fill="#fff" opacity=".8" transform="rotate(30 34 60)"/>
+<ellipse cx="30" cy="101" rx="8" ry="4.5" fill="#F29BB8" opacity=".7"/><ellipse cx="90" cy="101" rx="8" ry="4.5" fill="#F29BB8" opacity=".7"/>
 ${['corpo', 'cintura', 'pes', 'cabeca', 'mao'].map((k) => GEAR[gear[k]] || '').join('')}
 <g class="eyes">${eyes}</g>${mouth}${front}${extra}</svg>`
 }

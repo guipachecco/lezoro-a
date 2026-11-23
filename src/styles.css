@@ -287,3 +287,4 @@ h1, h2, h3 { font-family: var(--display); color: var(--navy); letter-spacing: -.
 .rank .pos { width: 28px; font: 800 14px var(--display); color: var(--violet) }
 .rank.wide li { background: #fff; border: 2px solid var(--line) }
 .toast.invite { margin-bottom: 12px }
+.depth { color: var(--violet); font-weight: 700 }

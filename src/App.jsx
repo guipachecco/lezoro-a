@@ -124,6 +124,15 @@ export default function App() {
     }
   }
 
+  // Quiz de profundidade (uma chance). s existe em conta antiga ou restart; senão é um cadastro novo.
+  const quiz = (
+    <Placement onDone={(depth) => {
+      if (s) setS({ ...s, prefs: { ...s.prefs, depth } })
+      else { const { prefs, ...user } = draft; setS(newState(user, { ...prefs, depth }, today)) }
+      setView('home')
+    }} />
+  )
+
   switch (view) {
     case 'loading':
       return <div className="splash"><Grao st="dormindo" style={{ width: 120 }} /></div>
@@ -145,12 +154,7 @@ export default function App() {
     case 'onboard':
       return <Onboarding name={draft.name} onBack={() => (sb ? logout() : setView('auth'))} onDone={(prefs) => { setDraft({ ...draft, prefs }); setView('quiz') }} />
     case 'quiz':
-      // s existe quando o quiz vem de um restart; senão é um cadastro novo
-      return <Placement onDone={(depth) => {
-        if (s) setS({ ...s, prefs: { ...s.prefs, depth } })
-        else { const { prefs, ...user } = draft; setS(newState(user, { ...prefs, depth }, today)) }
-        setView('home')
-      }} />
+      return quiz
     case 'lesson':
     case 'daily': {
       const isDaily = view === 'daily'
@@ -176,7 +180,8 @@ export default function App() {
           onExit={() => { setRoom(null); setView('friends') }} />
       )
     default: {
-      const Tab = { home: Home, bible: Bible, badges: Badges, profile: Profile, friends: Friends }[view] || Home
+      if (!s.prefs?.depth) return quiz // conta antiga ou depois de um restart: faz o quiz uma vez
+      const Tab ={ home: Home, bible: Bible, badges: Badges, profile: Profile, friends: Friends }[view] || Home
       return (
         <div className="shell">
           <main className="shell-main">
