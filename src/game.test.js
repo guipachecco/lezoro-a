@@ -77,15 +77,22 @@ test('conteúdo: ids únicos e 5 perguntas por lição', () => {
 })
 
 test('conteúdo: toda pergunta tem 4 alternativas distintas e referência', () => {
-  for (const q of [...UNITS.flatMap((u) => u.lessons.flatMap((l) => l.qs)), ...DAILY]) {
+  for (const q of [...UNITS.flatMap((u) => u.lessons.flatMap((l) => [...l.qs, ...l.deep])), ...DAILY]) {
     assert.equal(new Set(q.a).size, 4, q.q)
     assert.ok(q.ref, q.q)
   }
+  for (const l of UNITS.flatMap((u) => u.lessons)) assert.equal(l.deep.length, 3, `aprofundamento de ${l.id}`)
 })
 
-test('quiz do cadastro define a profundidade da trilha', async () => {
-  const { placement } = await import('./game.js')
-  assert.deepEqual([0, 2, 3, 4, 5, 6].map(placement), [3, 3, 4, 4, 5, 5])
+test('quiz de 10 perguntas define a trilha e o tamanho das lições', async () => {
+  const { placement, lessonQs, trailOf } = await import('./game.js')
+  const { PLACEMENT } = await import('./content.js')
+  assert.equal(PLACEMENT.length, 10)
+  for (const q of PLACEMENT) assert.equal(new Set(q.a).size, 4, q.q)
+  assert.deepEqual([0, 4, 5, 7, 8, 10].map(placement), ['semente', 'semente', 'raiz', 'raiz', 'profunda', 'profunda'])
+  const l = UNITS[0].lessons[0]
+  assert.deepEqual(['semente', 'raiz', 'profunda'].map((t) => lessonQs(l, t).length), [3, 5, 8])
+  assert.deepEqual([{ depth: 4 }, { depth: 'profunda' }, {}].map(trailOf), ['raiz', 'profunda', null]) // quiz antigo guardava número
 })
 
 test('baú, equipar e restart', async () => {

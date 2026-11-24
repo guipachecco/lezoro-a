@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { DAILY } from './content.js'
-import { addItem, dailyIndex, dayKey, equip, finishDaily, finishLesson, levelOf, loseLamp, MODES, newState, restart, rollChest } from './game.js'
+import { addItem, dailyIndex, dayKey, equip, finishDaily, finishLesson, lessonQs, levelOf, loseLamp, MODES, newState, restart, rollChest, trailOf } from './game.js'
 import { Friends } from './Friends.jsx'
 import { Room } from './Room.jsx'
 import { addFriend, ensureProfile, inbox, listFriends } from './social.js'
@@ -180,7 +180,7 @@ export default function App() {
           onExit={() => { setRoom(null); setView('friends') }} />
       )
     default: {
-      if (!s.prefs?.depth) return quiz // conta antiga ou depois de um restart: faz o quiz uma vez
+      if (!trailOf(s.prefs)) return quiz // conta antiga ou depois de um restart: faz o quiz uma vez
       const Tab ={ home: Home, bible: Bible, badges: Badges, profile: Profile, friends: Friends }[view] || Home
       return (
         <div className="shell">
@@ -195,7 +195,7 @@ export default function App() {
               </div>
             )}
             <Tab s={s} today={today} onDaily={() => setView('daily')} onLogout={logout} me={me} setS={setS} onRoom={openRoom}
-              onLesson={(l) => { setLesson({ ...l, qs: l.qs.slice(0, s.prefs?.depth || 5) }); setView('lesson') }}
+              onLesson={(l) => { setLesson({ ...l, qs: lessonQs(l, trailOf(s.prefs)) }); setView('lesson') }}
               onEquip={(id) => setS(equip(s, id))}
               onRestart={() => { setS(restart(s)); setView('quiz') }} />
           </main>

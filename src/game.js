@@ -109,9 +109,24 @@ export function shuffle(arr, rnd = Math.random) {
   return a
 }
 
-/** Profundidade da trilha pelo quiz do cadastro = perguntas por lição: 0–2 acertos → 3, 3–4 → 4, 5+ → 5. */
-export const placement = (score) => (score >= 5 ? 5 : score >= 3 ? 4 : 3)
-export const DEPTHS = { 3: 'Semente', 4: 'Raiz', 5: 'Profunda' }
+// Trilhas pelo quiz do cadastro (10 perguntas). Quanto mais fundo, mais perguntas e mais difíceis.
+export const TRAILS = {
+  semente: { name: 'Semente', desc: '3 perguntas básicas por lição' },
+  raiz: { name: 'Raiz', desc: '5 perguntas por lição' },
+  profunda: { name: 'Profunda', desc: '8 perguntas por lição, com aprofundamento' },
+}
+/** 0–4 acertos → semente, 5–7 → raiz, 8–10 → profunda. */
+export const placement = (score) => (score >= 8 ? 'profunda' : score >= 5 ? 'raiz' : 'semente')
+// Quem fez o quiz antigo guardou um número (3, 4 ou 5 perguntas): vira a trilha equivalente.
+const OLD_DEPTH = { 3: 'semente', 4: 'raiz', 5: 'profunda' }
+export const trailOf = (prefs) => (TRAILS[prefs?.depth] ? prefs.depth : OLD_DEPTH[prefs?.depth] || null)
+
+/** Perguntas da lição conforme a trilha: Semente só as básicas, Profunda soma as de aprofundamento. */
+export function lessonQs(lesson, trail) {
+  if (trail === 'semente') return lesson.qs.slice(0, 3)
+  if (trail === 'profunda') return [...lesson.qs, ...(lesson.deep || [])]
+  return lesson.qs
+}
 
 // Baú: [nome, cor, peso do sorteio]. Primeiro sorteia a raridade, depois um item dela.
 export const RARITY = {

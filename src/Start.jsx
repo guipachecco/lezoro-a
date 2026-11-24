@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { sb } from './supabase.js'
 import { Bar, Grao, Icon, Wordmark } from './ui.jsx'
 import { PLACEMENT } from './content.js'
-import { DEPTHS, placement, shuffle } from './game.js'
+import { placement, shuffle, TRAILS } from './game.js'
 
 /** Tela aberta pelo link de "Esqueci minha senha". */
 export function NewPassword({ onDone }) {
@@ -187,15 +187,15 @@ export function Placement({ onDone }) {
   const [i, setI] = useState(0)
   const [score, setScore] = useState(0)
   const [opts] = useState(() => PLACEMENT.map((p) => shuffle(p.a)))
-  const depth = placement(score)
+  const trail = placement(score)
 
   if (i === PLACEMENT.length) {
     return (
       <div className="screen result">
         <Grao st="celebra" lvl={1} style={{ width: 150 }} />
-        <h2>Sua trilha: {DEPTHS[depth]}</h2>
-        <p className="muted">Você acertou {score} de {PLACEMENT.length}. Cada lição terá {depth} perguntas. Quer mudar? Só com um restart do baú!</p>
-        <button className="btn" type="button" onClick={() => onDone(depth)}>Começar minha trilha</button>
+        <h2>Sua trilha: {TRAILS[trail].name}</h2>
+        <p className="muted">Você acertou {score} de {PLACEMENT.length}. {TRAILS[trail].desc}. Quer mudar? Só com um restart do baú!</p>
+        <button className="btn" type="button" onClick={() => onDone(trail)}>Começar minha trilha</button>
       </div>
     )
   }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { addDays, badges, currentLesson, dailyIndex, DEPTHS, ITEMS, levelOf, LEVELS, RARITY } from './game.js'
+import { addDays, badges, currentLesson, dailyIndex, ITEMS, levelOf, LEVELS, RARITY, trailOf, TRAILS } from './game.js'
 import { DAILY, UNITS } from './content.js'
 import { InstallBanner } from './Install.jsx'
 import { Reminder } from './Reminder.jsx'
@@ -30,7 +30,7 @@ export function Home({ s, today, onLesson, onDaily }) {
         <Grao st="orgulhoso" lvl={lv.n} gear={s.gear} className="lvl-m" />
         <div className="lvl-body">
           <b>Nível {lv.n} · {lv.name}</b>
-          {s.prefs?.depth && <small className="depth">Trilha {DEPTHS[s.prefs.depth]} · {s.prefs.depth} perguntas por lição</small>}
+          {trailOf(s.prefs) && <small className="depth">Trilha {TRAILS[trailOf(s.prefs)].name} · {TRAILS[trailOf(s.prefs)].desc}</small>}
           {lv.next
             ? <><Bar pct={((s.seeds - lv.min) / (lv.next.min - lv.min)) * 100} h={8} /><small>{fmt(s.seeds)} / {fmt(lv.next.min)} sementes até {lv.next.name}</small></>
             : <small>Sua árvore já dá frutos. Gálatas 5:22</small>}
@@ -147,7 +147,7 @@ export function Profile({ s, today, onLogout, onEquip, onRestart }) {
         <div>
           <b>{s.user.name}</b>
           <small>Cultivando desde {MONTHS[+m - 1]} {y}</small>
-          <span className="chip">Nível {lv.n} · {lv.name}{s.prefs?.depth ? ` · Trilha ${DEPTHS[s.prefs.depth]}` : ''}</span>
+          <span className="chip">Nível {lv.n} · {lv.name}{trailOf(s.prefs) ? ` · Trilha ${TRAILS[trailOf(s.prefs)].name}` : ''}</span>
         </div>
       </div>
       <div className="card">

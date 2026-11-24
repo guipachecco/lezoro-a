@@ -175,14 +175,18 @@ export const DAILY = [
   { q: 'Confia no Senhor de todo o teu ___.', a: ['coração', 'tempo', 'caminho', 'dinheiro'], ref: 'Provérbios 3:5' },
 ]
 
-// Quiz do cadastro (uma chance só): do mais fácil ao mais difícil. A pontuação define a trilha inicial.
+// Quiz do cadastro (uma chance só): 10 perguntas do mais fácil ao mais difícil. A pontuação define a trilha.
 export const PLACEMENT = [
   { q: 'Qual é o primeiro livro da Bíblia?', a: ['Gênesis', 'Êxodo', 'Salmos', 'Mateus'] },
   { q: 'Quem foi engolido por um grande peixe?', a: ['Jonas', 'Pedro', 'Elias', 'Noé'] },
   { q: 'Quem venceu o gigante Golias?', a: ['Davi', 'Sansão', 'Saul', 'Gideão'] },
+  { q: 'Quem foi o primeiro rei de Israel?', a: ['Saul', 'Davi', 'Salomão', 'Samuel'] },
   { q: 'Quem levou o povo de Israel para Canaã depois de Moisés?', a: ['Josué', 'Arão', 'Calebe', 'Samuel'] },
   { q: 'Qual era o trabalho de Mateus antes de seguir Jesus?', a: ['Cobrador de impostos', 'Pescador', 'Carpinteiro', 'Soldado'] },
+  { q: 'Qual profeta enfrentou os profetas de Baal no monte Carmelo?', a: ['Elias', 'Eliseu', 'Isaías', 'Jeremias'] },
   { q: 'Em qual evangelho está a parábola do filho pródigo?', a: ['Lucas', 'Mateus', 'Marcos', 'João'] },
+  { q: 'Quem escreveu o livro de Apocalipse?', a: ['João', 'Paulo', 'Pedro', 'Lucas'] },
+  { q: 'Quantos livros tem o Novo Testamento?', a: ['27', '39', '66', '12'] },
 ]
 
 // Versículos conhecidos para os desafios "Onde está o versículo?" e "Termine o versículo".
@@ -209,3 +213,78 @@ export const VERSES = [
   ['Gálatas 5:22', 'O fruto do Espírito é:', 'amor, alegria, paz, paciência, benignidade'],
   ['1 Coríntios 13:4', 'O amor é paciente,', 'o amor é bondoso'],
 ].map(([ref, start, end]) => ({ ref, start, end }))
+
+// Perguntas de aprofundamento (só na trilha Profunda), 3 por lição.
+const DEEP = {
+  'gn-1': [
+    { q: 'O que Deus criou no quarto dia?', a: ['O sol, a lua e as estrelas', 'Os peixes e as aves', 'A terra seca e as plantas', 'O homem e a mulher'], ref: 'Gênesis 1:14-19' },
+    { q: 'À imagem de quem o ser humano foi criado?', a: ['À imagem de Deus', 'À imagem dos anjos', 'À imagem de Adão', 'À imagem da terra'], ref: 'Gênesis 1:27' },
+    { q: 'De onde Deus formou a mulher?', a: ['De uma costela do homem', 'Do pó da terra', 'Da água do rio', 'De um ramo de árvore'], ref: 'Gênesis 2:21-22' },
+  ],
+  'gn-2': [
+    { q: 'Qual era o trabalho de Caim?', a: ['Lavrador', 'Pastor', 'Pescador', 'Ferreiro'], ref: 'Gênesis 4:2' },
+    { q: 'O que Deus pôs a leste do Éden para guardar o caminho da árvore da vida?', a: ['Querubins e uma espada flamejante', 'Um muro de pedra', 'Um rio profundo', 'Um leão'], ref: 'Gênesis 3:24' },
+    { q: 'Com que Deus vestiu Adão e Eva?', a: ['Túnicas de peles', 'Folhas de figueira', 'Linho fino', 'Lã de ovelha'], ref: 'Gênesis 3:21' },
+  ],
+  'gn-3': [
+    { q: 'Quais eram os filhos de Noé?', a: ['Sem, Cam e Jafé', 'Caim, Abel e Sete', 'Rúben, Simeão e Levi', 'Esaú, Jacó e Ló'], ref: 'Gênesis 6:10' },
+    { q: 'Sobre que montes a arca repousou?', a: ['Ararate', 'Sinai', 'Carmelo', 'Hermom'], ref: 'Gênesis 8:4' },
+    { q: 'Qual ave Noé soltou primeiro?', a: ['Um corvo', 'Uma pomba', 'Uma águia', 'Um pardal'], ref: 'Gênesis 8:7' },
+  ],
+  'gn-4': [
+    { q: 'De que cidade Abraão saiu com sua família?', a: ['Ur dos caldeus', 'Jerusalém', 'Babilônia', 'Nínive'], ref: 'Gênesis 11:31' },
+    { q: 'Que rei e sacerdote abençoou Abraão com pão e vinho?', a: ['Melquisedeque', 'Abimeleque', 'Faraó', 'Ló'], ref: 'Gênesis 14:18-19' },
+    { q: 'Que animal Deus providenciou no lugar de Isaque?', a: ['Um carneiro', 'Um cordeiro', 'Um bezerro', 'Uma pomba'], ref: 'Gênesis 22:13' },
+  ],
+  'gn-5': [
+    { q: 'Quem Abraão enviou para buscar uma esposa para Isaque?', a: ['Seu servo', 'Ló', 'Ismael', 'Labão'], ref: 'Gênesis 24:2-4' },
+    { q: 'Ao todo, quantos anos Jacó trabalhou para Labão por Raquel?', a: ['14', '7', '10', '20'], ref: 'Gênesis 29:20, 27-30' },
+    { q: 'Que nome Jacó deu ao lugar onde lutou até o amanhecer?', a: ['Peniel', 'Betel', 'Berseba', 'Hebrom'], ref: 'Gênesis 32:30' },
+  ],
+  'gn-6': [
+    { q: 'Quem comprou José no Egito?', a: ['Potifar', 'O faraó', 'O copeiro-chefe', 'Jetro'], ref: 'Gênesis 37:36' },
+    { q: 'Por quantas peças de prata José foi vendido?', a: ['20', '30', '10', '50'], ref: 'Gênesis 37:28' },
+    { q: 'Como se chamavam os filhos de José?', a: ['Manassés e Efraim', 'Rúben e Judá', 'Benjamim e Levi', 'Perez e Zerá'], ref: 'Gênesis 41:51-52' },
+  ],
+  'ex-1': [
+    { q: 'Para qual terra Moisés fugiu depois de matar um egípcio?', a: ['Midiã', 'Canaã', 'Babilônia', 'Edom'], ref: 'Êxodo 2:15' },
+    { q: 'Quem era o sogro de Moisés?', a: ['Jetro', 'Labão', 'Arão', 'Hur'], ref: 'Êxodo 3:1' },
+    { q: 'Em que se transformou o cajado de Moisés quando ele o lançou ao chão?', a: ['Numa serpente', 'Numa árvore', 'Em fogo', 'Em ouro'], ref: 'Êxodo 4:3' },
+  ],
+  'ex-2': [
+    { q: 'Qual foi a segunda praga?', a: ['Rãs', 'Piolhos', 'Moscas', 'Granizo'], ref: 'Êxodo 8:2-6' },
+    { q: 'Por quantos dias as trevas cobriram o Egito?', a: ['3', '7', '1', '40'], ref: 'Êxodo 10:22' },
+    { q: 'Com o que os israelitas deviam comer o cordeiro da Páscoa?', a: ['Pães sem fermento e ervas amargas', 'Mel e leite', 'Vinho e figos', 'Azeite e sal'], ref: 'Êxodo 12:8' },
+  ],
+  'ex-3': [
+    { q: 'Em Mara, como a água amarga ficou doce?', a: ['Moisés lançou uma árvore nela', 'Choveu do céu', 'Arão orou sobre ela', 'O povo cavou um poço'], ref: 'Êxodo 15:23-25' },
+    { q: 'O que Moisés fez para sair água da rocha em Horebe?', a: ['Feriu a rocha com o cajado', 'Falou com a rocha', 'Quebrou a rocha', 'Cavou ao lado dela'], ref: 'Êxodo 17:6' },
+    { q: 'Quem segurou os braços de Moisés na batalha contra Amaleque?', a: ['Arão e Hur', 'Josué e Calebe', 'Jetro e Arão', 'Miriã e Arão'], ref: 'Êxodo 17:12' },
+  ],
+  'ex-4': [
+    { q: 'Qual é o primeiro mandamento?', a: ['Não terás outros deuses diante de mim', 'Não matarás', 'Honra teu pai e tua mãe', 'Não furtarás'], ref: 'Êxodo 20:3' },
+    { q: 'Quanto tempo Moisés ficou no monte com Deus?', a: ['40 dias e 40 noites', '7 dias', '3 dias', '12 dias'], ref: 'Êxodo 24:18' },
+    { q: 'O que Moisés fez com as tábuas ao ver o bezerro de ouro?', a: ['Quebrou as tábuas', 'Escondeu as tábuas', 'Enterrou as tábuas', 'Entregou-as a Arão'], ref: 'Êxodo 32:19' },
+  ],
+  'jesus-1': [
+    { q: 'Qual rei mandou matar os meninos de Belém?', a: ['Herodes', 'Pilatos', 'César Augusto', 'Davi'], ref: 'Mateus 2:16' },
+    { q: 'Para onde José fugiu com Maria e o menino?', a: ['Egito', 'Nazaré', 'Babilônia', 'Roma'], ref: 'Mateus 2:13-14' },
+    { q: 'Quem tomou o menino nos braços no templo e disse que já podia partir em paz?', a: ['Simeão', 'Zacarias', 'João Batista', 'Nicodemos'], ref: 'Lucas 2:25-29' },
+  ],
+  'jesus-2': [
+    { q: 'Por quantos dias Jesus jejuou no deserto?', a: ['40', '7', '3', '12'], ref: 'Mateus 4:2' },
+    { q: 'Qual cego de Jericó gritou: Filho de Davi, tem misericórdia de mim?', a: ['Bartimeu', 'Lázaro', 'Zaqueu', 'Jairo'], ref: 'Marcos 10:46-47' },
+    { q: 'De quem era a filha que Jesus ressuscitou dizendo: Talitá cumi?', a: ['De Jairo', 'De Pedro', 'De Zaqueu', 'De Nicodemos'], ref: 'Marcos 5:22, 41' },
+  ],
+  'jesus-3': [
+    { q: 'Na parábola das dez virgens, quantas eram prudentes?', a: ['5', '3', '7', '10'], ref: 'Mateus 25:2' },
+    { q: 'O que o homem achou escondido no campo e vendeu tudo para comprar o campo?', a: ['Um tesouro', 'Uma pérola', 'Uma ovelha', 'Uma moeda'], ref: 'Mateus 13:44' },
+    { q: 'Na parábola do semeador, o que houve com a semente à beira do caminho?', a: ['As aves a comeram', 'Secou ao sol', 'Os espinhos a sufocaram', 'Deu muito fruto'], ref: 'Mateus 13:4' },
+  ],
+  'jesus-4': [
+    { q: 'Por quantas moedas de prata Judas traiu Jesus?', a: ['30', '20', '40', '100'], ref: 'Mateus 26:15' },
+    { q: 'Em que lugar Jesus orou antes de ser preso?', a: ['Getsêmani', 'Éden', 'Betânia', 'Gólgota'], ref: 'Mateus 26:36' },
+    { q: 'Quem foi obrigado a carregar a cruz de Jesus?', a: ['Simão de Cirene', 'Pedro', 'José de Arimateia', 'João'], ref: 'Mateus 27:32' },
+  ],
+}
+for (const u of UNITS) for (const l of u.lessons) l.deep = DEEP[l.id] || []
