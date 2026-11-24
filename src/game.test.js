@@ -112,7 +112,7 @@ test('baú, equipar e restart', async () => {
 test('desafios: perguntas válidas em todos os modos, ranking e remover item', async () => {
   const { buildChallenge, MODES, rank, removeItem, addItem } = await import('./game.js')
   const { VERSES } = await import('./content.js')
-  for (const mode of Object.keys(MODES)) {
+  for (const mode of Object.keys(MODES).filter((m) => MODES[m].n)) {
     const qs = buildChallenge(mode, UNITS, VERSES)
     assert.equal(qs.length, Math.min(MODES[mode].n, mode === 'onde' || mode === 'termine' ? VERSES.length : 99))
     for (const q of qs) assert.equal(new Set(q.a).size, 4, `${mode}: ${q.q}`)
@@ -122,4 +122,20 @@ test('desafios: perguntas válidas em todos os modos, ranking e remover item', a
   s = removeItem(s, 'escudo')
   assert.deepEqual([s.inv.escudo, s.gear], [0, {}])
   assert.equal(removeItem(s, 'escudo'), s)
+})
+
+test('gartic: cada álbum passa por todos os jogadores, um por rodada', async () => {
+  const { garticChain, garticKind } = await import('./game.js')
+  for (const n of [2, 3, 5]) {
+    for (let r = 0; r < n; r++) {
+      const chains = Array.from({ length: n }, (_, i) => garticChain(i, r, n))
+      assert.equal(new Set(chains).size, n, `rodada ${r} com ${n}: cada um num álbum diferente`)
+    }
+    for (let c = 0; c < n; c++) {
+      const who = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, i) => i).find((i) => garticChain(i, r, n) === c))
+      assert.equal(new Set(who).size, n, `álbum ${c} passa por todos`)
+      assert.equal(who[0], c, 'quem começa o álbum é o dono')
+    }
+  }
+  assert.deepEqual([0, 1, 2, 3, 4].map(garticKind), ['escrever', 'desenhar', 'descrever', 'desenhar', 'descrever'])
 })

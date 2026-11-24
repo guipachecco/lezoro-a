@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { VERSES, UNITS } from './content.js'
+import { GARTIC_SCENES, VERSES, UNITS } from './content.js'
+import { Gartic } from './Gartic.jsx'
 import { buildChallenge, MAX_PLAYERS, MODES, rank, shuffle, XP_PLAY, XP_WIN } from './game.js'
 import { awardXp, sendInvite } from './social.js'
 import { sb } from './supabase.js'
@@ -18,6 +19,9 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
   const [closed, setClosed] = useState(false)
   const [xp, setXp] = useState(null)
   const [invited, setInvited] = useState({})
+  const [round, setRound] = useState(0) // Gartic: rodada atual
+  const [entries, setEntries] = useState({}) // Gartic: "rodada:álbum" → texto ou traços
+  const advanced = useRef(-1)
   const ch = useRef(null)
 
   useEffect(() => {
@@ -25,6 +29,8 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
     c.on('presence', { event: 'sync' }, () => setPlayers(Object.values(c.presenceState()).map((p) => p[0])))
       .on('broadcast', { event: 'inicio' }, ({ payload }) => setGame((g) => g || payload))
       .on('broadcast', { event: 'fim' }, ({ payload }) => setResults((r) => ({ ...r, [payload.id]: payload })))
+      .on('broadcast', { event: 'entrada' }, ({ payload }) => setEntries((e) => ({ ...e, [`${payload.r}:${payload.c}`]: payload })))
+      .on('broadcast', { event: 'rodada' }, ({ payload }) => setRound((r) => Math.max(r, payload.r)))
       .subscribe((st) => { if (st === 'SUBSCRIBED') c.track({ id: me.id, name: me.name, host, mode: myMode }) })
     ch.current = c
     return () => { sb.removeChannel(c) }
@@ -43,9 +49,19 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
     awardXp(`${code}-${game.at}`, amount).then(onXp).catch(() => setXp(0))
   }, [final])
 
+  const max = MODES[mode]?.max || MAX_PLAYERS
   function start() {
-    const payload = { mode, at: Date.now(), qs: buildChallenge(mode, UNITS, VERSES), players: players.slice(0, MAX_PLAYERS).map(({ id, name }) => ({ id, name })) }
+    const who = players.slice(0, max).map(({ id, name }) => ({ id, name }))
+    const payload = mode === 'gartic'
+      ? { mode, at: Date.now(), players: who, scenes: shuffle(GARTIC_SCENES).slice(0, who.length) }
+      : { mode, at: Date.now(), qs: buildChallenge(mode, UNITS, VERSES), players: who }
     ch.current.send({ type: 'broadcast', event: 'inicio', payload })
+  }
+  const send = (event, payload) => ch.current.send({ type: 'broadcast', event, payload })
+  function advance(r) {
+    if (advanced.current >= r) return // cada rodada é anunciada uma vez só
+    advanced.current = r
+    send('rodada', { r })
   }
   function finish(r) {
     setMine(r)
@@ -56,6 +72,13 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
     try { await sendInvite(f.id, { room: code, mode, from: me.name }); setInvited((x) => ({ ...x, [f.id]: 'ok' })) } catch { setInvited((x) => ({ ...x, [f.id]: 'erro' })) }
   }
 
+  if (game?.mode === 'gartic' && game.players.some((p) => p.id === me.id)) {
+    return (
+      <Gartic game={game} me={me} round={round} entries={entries} host={host} code={code} lvl={lvl} gear={gear}
+        onSubmit={(r, c, kind, content) => send('entrada', { r, c, kind, by: me.id, ...content })}
+        onAdvance={advance} onXp={onXp} onExit={onExit} />
+    )
+  }
   const playing = game && !mine && game.players.some((p) => p.id === me.id)
   if (playing) return <Play key={game.at} qs={game.qs} secs={MODES[game.mode].secs} title={MODES[game.mode].name} onDone={finish} />
 
@@ -94,7 +117,7 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
         <small className="muted">{game ? 'A partida já começou sem você. Espere a próxima!' : host ? 'Chame seus amigos e comece quando todos estiverem aqui.' : 'Esperando quem criou a sala começar…'}</small>
       </div>
       <div className="card stack">
-        <b className="h">Na sala ({players.length}/{MAX_PLAYERS})</b>
+        <b className="h">Na sala ({players.length}/{max})</b>
         {players.map((p) => (
           <div key={p.id} className="friend"><span className="avatar sm">{p.name[0]?.toUpperCase()}</span><span className="grow"><b>{p.name}</b>{p.host && <small>criou a sala</small>}</span></div>
         ))}
@@ -113,7 +136,7 @@ export function Room({ me, code, mode: myMode, host, friends, lvl, gear, onXp, o
           <small className="muted">O convite chega para quem estiver com o app aberto.</small>
         </div>
       )}
-      {host && !game && <button className="btn push" type="button" disabled={players.length < 2} onClick={start}>{players.length < 2 ? 'Esperando mais alguém…' : `Começar com ${Math.min(players.length, MAX_PLAYERS)}`}</button>}
+      {host && !game && <button className="btn push" type="button" disabled={players.length < 2} onClick={start}>{players.length < 2 ? 'Esperando mais alguém…' : `Começar com ${Math.min(players.length, max)}`}</button>}
     </div>
   )
 }

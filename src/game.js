@@ -188,8 +188,16 @@ export const MODES = {
   rapido: { name: 'Quiz rápido', sub: 'Quem acerta mais em 60 segundos', n: 20, secs: 60 },
   onde: { name: 'Onde está o versículo?', sub: 'Acerte a referência', n: 8 },
   termine: { name: 'Termine o versículo', sub: 'Escolha o final certo', n: 8 },
+  gartic: { name: 'Gartic da Bíblia', sub: 'Escreva, desenhe e adivinhe (até 5)', max: 5 },
 }
 export const XP_WIN = 50, XP_PLAY = 10, MAX_PLAYERS = 8
+
+// Gartic da Bíblia: com n jogadores há n rodadas e n álbuns (um começado por cada jogador).
+// Rodada 0 escreve uma cena; depois alterna desenhar e descrever o que chegou do jogador anterior.
+export const GARTIC_SECS = { escrever: 45, desenhar: 90, descrever: 45 }
+export const garticKind = (r) => (r === 0 ? 'escrever' : r % 2 ? 'desenhar' : 'descrever')
+/** Álbum em que o jogador i trabalha na rodada r (cada rodada passa o álbum para o próximo). */
+export const garticChain = (i, r, n) => (((i - r) % n) + n) % n
 
 /** Perguntas da partida, no mesmo formato das lições (a[0] é a certa). Quem cria a sala sorteia e manda para todos. */
 export function buildChallenge(mode, units, verses, rnd = Math.random) {

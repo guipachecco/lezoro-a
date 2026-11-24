@@ -288,3 +288,15 @@ const DEEP = {
   ],
 }
 for (const u of UNITS) for (const l of u.lessons) l.deep = DEEP[l.id] || []
+
+// Sugestões de cena para a primeira rodada do Gartic da Bíblia (dá para trocar pelo que quiser).
+export const GARTIC_SCENES = [
+  'Davi vence Golias', 'Noé e a arca cheia de animais', 'Jonas engolido pelo grande peixe', 'Moisés abre o mar Vermelho',
+  'Daniel na cova dos leões', 'A torre de Babel', 'Jesus anda sobre as águas', 'A multiplicação dos pães e peixes',
+  'Sansão derruba as colunas do templo', 'A sarça que ardia sem se queimar', 'Zaqueu sobe na árvore para ver Jesus',
+  'O filho pródigo volta para casa', 'Adão e Eva no jardim do Éden', 'A escada de Jacó até o céu', 'José e a túnica colorida',
+  'Elias sobe ao céu num carro de fogo', 'Jesus nasce na manjedoura', 'O galo canta depois que Pedro nega Jesus',
+  'As muralhas de Jericó caem', 'O bom samaritano ajuda o ferido', 'O pastor acha a ovelha perdida', 'Gideão e os 300 com tochas',
+  'A pesca maravilhosa', 'Lázaro sai do túmulo', 'Jesus acalma a tempestade', 'Os magos seguem a estrela',
+  'Moisés desce do monte com as tábuas', 'Ester diante do rei', 'Rute colhe espigas no campo', 'A pomba volta com a folha de oliveira',
+]

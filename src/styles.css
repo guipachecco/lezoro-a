@@ -288,3 +288,14 @@ h1, h2, h3 { font-family: var(--display); color: var(--navy); letter-spacing: -.
 .rank.wide li { background: #fff; border: 2px solid var(--line) }
 .toast.invite { margin-bottom: 12px }
 .depth { color: var(--violet); font-weight: 700 }
+
+/* Gartic da Bíblia */
+.pad { display: flex; flex-direction: column; gap: 8px }
+.pad-canvas { width: 100%; max-width: 360px; aspect-ratio: 1; align-self: center; background: #fff; border: 2px solid var(--line); border-radius: 16px; touch-action: none; cursor: crosshair }
+.pad-tools { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center }
+.swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; background: #fff; padding: 0 }
+.swatch.on { outline: 3px solid var(--navy); outline-offset: 1px }
+.swatch.size i { display: block; border-radius: 50%; background: var(--navy) }
+.drawing { width: 100%; max-width: 360px; aspect-ratio: 1; align-self: center; display: block; margin: 0 auto; border: 2px solid var(--line); border-radius: 16px }
+.album-step { display: flex; flex-direction: column; gap: 6px }
+.gartic .bubble::before, .album-step .bubble::before { display: none }
