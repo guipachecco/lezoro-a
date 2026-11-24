@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
-import { RARITY, shuffle } from './game.js'
-import { Bar, Grao, Icon, fmt } from './ui.jsx'
+import { shuffle } from './game.js'
+import { chestSvg } from './Chest.jsx'
+import { Art, Bar, Grao, Icon, fmt } from './ui.jsx'
 
 const PRAISE = ['Isso mesmo!', 'Muito bem!', 'Mais uma semente plantada!', 'Certinho!']
 const pick = (arr, i) => arr[i % arr.length]
@@ -9,7 +10,7 @@ const pick = (arr, i) => arr[i % arr.length]
  * Uma rodada de perguntas. mode 'daily' não gasta lamparinas.
  * onFinish(correct, total) devolve { earned, streak, lvlUp } para a tela de resultado.
  */
-export function Lesson({ title, qs, mode = 'lesson', lamps, lvl, onWrong, onFinish, onExit }) {
+export function Lesson({ title, qs, mode = 'lesson', lamps, lvl, onWrong, onFinish, onExit, onChest }) {
   const items = useMemo(() => qs.map((q) => ({ ...q, opts: shuffle(q.a) })), [qs])
   const [i, setI] = useState(0)
   const [picked, setPicked] = useState(null)
@@ -36,7 +37,7 @@ export function Lesson({ title, qs, mode = 'lesson', lamps, lvl, onWrong, onFini
     setEnd({ kind: 'done', correct: hits, total: items.length, ...onFinish(hits, items.length) })
   }
 
-  if (end) return <Result end={end} mode={mode} lvl={lvl} onExit={onExit} />
+  if (end) return <Result end={end} mode={mode} lvl={lvl} onExit={onExit} onChest={onChest} />
 
   return (
     <div className="screen lesson">
@@ -77,7 +78,7 @@ export function Lesson({ title, qs, mode = 'lesson', lamps, lvl, onWrong, onFini
   )
 }
 
-function Result({ end, mode, lvl, onExit }) {
+function Result({ end, mode, lvl, onExit, onChest }) {
   if (end.kind === 'out') {
     return (
       <div className="screen result">
@@ -98,14 +99,18 @@ function Result({ end, mode, lvl, onExit }) {
         <div><Icon n="check" style={{ color: 'var(--violet)' }} /><b>{end.correct}/{end.total}</b><small>acertos</small></div>
         <div><Icon n="gota" f style={{ color: 'var(--blue)' }} /><b>{end.streak}</b><small>dias regados</small></div>
       </div>
-      {end.item && (
-        <div className="chest hop" style={{ '--rc': RARITY[end.item.r][1] }} role="status">
-          <small>Baú aberto · {RARITY[end.item.r][0]}</small>
-          <b>{end.item.name}</b>
-          {end.item.ref && <span className="muted">{end.item.ref}</span>}
-        </div>
-      )}
-      <button className="btn push" type="button" onClick={onExit} autoFocus>Continuar</button>
+      {end.chest
+        ? (
+          <>
+            <div className="chest-card hop" role="status">
+              <Art html={chestSvg()} className="chest-art bob" />
+              <span><b>Você ganhou um baú!</b><small className="muted">Abra agora ou guarde para depois.</small></span>
+            </div>
+            <button className="btn push" type="button" onClick={onChest} autoFocus>Abrir agora</button>
+            <button className="btn ghost-dark" type="button" onClick={onExit}>Guardar para depois</button>
+          </>
+        )
+        : <button className="btn push" type="button" onClick={onExit} autoFocus>Continuar</button>}
     </div>
   )
 }

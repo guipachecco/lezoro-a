@@ -4,14 +4,15 @@ import { DAILY, UNITS } from './content.js'
 import { InstallBanner } from './Install.jsx'
 import { Reminder } from './Reminder.jsx'
 import { sb } from './supabase.js'
-import { Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
+import { Art, Bar, Counters, Grao, Icon, Plant, fmt } from './ui.jsx'
+import { chestSvg } from './Chest.jsx'
 
 const ALL = UNITS.flatMap((u) => u.lessons)
 const UNIT_BG = ['var(--blue)', 'var(--violet)', 'var(--navy)']
 const OFFSETS = [0, -48, -16, 36, 8, -30]
 const WEEK = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
-export function Home({ s, today, onLesson, onDaily }) {
+export function Home({ s, today, onLesson, onDaily, onChest }) {
   const lv = levelOf(s.seeds)
   const cur = currentLesson(ALL, s.done)
   useEffect(() => { requestAnimationFrame(() => document.querySelector('.node.cur')?.scrollIntoView({ block: 'center' })) }, [])
@@ -23,6 +24,7 @@ export function Home({ s, today, onLesson, onDaily }) {
     <div className="screen home">
       <Counters s={s} />
       <InstallBanner />
+      <ChestBanner n={s.chests} onOpen={onChest} />
       {thirsty && (
         <div className="toast"><Grao st="dormindo" lvl={lv.n} style={{ width: 52, flex: 'none' }} /><span><b>Estou com sede.</b> Faça uma lição hoje para manter {s.streak} {s.streak === 1 ? 'dia regado' : 'dias regados'}.</span></div>
       )}
@@ -130,7 +132,7 @@ export function Badges({ s, today }) {
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-export function Profile({ s, today, onLogout, onEquip, onRestart }) {
+export function Profile({ s, today, onLogout, onEquip, onRestart, onChest }) {
   const lv = levelOf(s.seeds)
   const done = Object.values(s.done)
   const total = done.reduce((a, d) => a + d.total, 0)
@@ -152,6 +154,7 @@ export function Profile({ s, today, onLogout, onEquip, onRestart }) {
       </div>
       <div className="card">
         <div className="row between"><b className="h">Seu personagem</b><small className="muted">Baú a cada lição concluída</small></div>
+        <ChestBanner n={s.chests} onOpen={onChest} />
         <div className="row" style={{ alignItems: 'flex-start' }}>
           <Grao st="feliz" lvl={lv.n} gear={s.gear} style={{ width: 140, flex: "none" }} />
           <div className="inv">
@@ -202,5 +205,17 @@ export function Profile({ s, today, onLogout, onEquip, onRestart }) {
         ? <button type="button" className="logout" onClick={onLogout}><Icon n="sair" />Sair da conta</button>
         : <p className="hint muted center">Modo local: seu progresso fica salvo só neste aparelho.</p>}
     </div>
+  )
+}
+
+/** Aviso de baús guardados, com atalho para abrir. */
+function ChestBanner({ n, onOpen }) {
+  if (!n) return null
+  return (
+    <button type="button" className="chest-card" onClick={onOpen}>
+      <Art html={chestSvg()} className="chest-art bob" />
+      <span className="grow"><b>{n === 1 ? 'Você tem 1 baú fechado' : `Você tem ${n} baús fechados`}</b><small className="muted">Toque para abrir</small></span>
+      <Icon n="seta" style={{ transform: 'rotate(180deg)', color: 'var(--navy)' }} />
+    </button>
   )
 }

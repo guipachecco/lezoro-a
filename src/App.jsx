@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DAILY } from './content.js'
-import { addItem, dailyIndex, dayKey, equip, finishDaily, finishLesson, lessonQs, levelOf, loseLamp, MODES, newState, restart, rollChest, trailOf } from './game.js'
+import { addChest, dailyIndex, dayKey, equip, finishDaily, finishLesson, itemById, lessonQs, levelOf, loseLamp, MODES, newState, openChest, restart, trailOf } from './game.js'
+import { ChestOpen } from './Chest.jsx'
 import { Friends } from './Friends.jsx'
 import { Room } from './Room.jsx'
 import { addFriend, ensureProfile, inbox, listFriends } from './social.js'
@@ -120,8 +121,18 @@ export default function App() {
       const before = levelOf(s.seeds).n
       const r = apply(correct, total)
       setS(r.state)
-      return { earned: r.earned, streak: r.state.streak, lvlUp: levelOf(r.state.seeds).n > before, item: r.item }
+      return { earned: r.earned, streak: r.state.streak, lvlUp: levelOf(r.state.seeds).n > before, chest: r.chest }
     }
+  }
+
+  // O prêmio é sorteado e salvo antes da animação: fechar o app no meio não perde nada.
+  const [prize, setPrize] = useState(null)
+  function openChestNow() {
+    const r = openChest(s)
+    if (!r.item) return setView('home')
+    setS(r.state)
+    setPrize({ item: r.item, at: Date.now() })
+    setView('chest')
   }
 
   // Quiz de profundidade (uma chance). s existe em conta antiga ou restart; senão é um cadastro novo.
@@ -168,11 +179,18 @@ export default function App() {
           onWrong={() => setS((x) => loseLamp(x))}
           onFinish={done(isDaily
             ? (c) => { const st = finishDaily(s, c > 0, today); return { state: st, earned: st.seeds - s.seeds } }
-            : (c, t) => { const r = finishLesson(s, lesson.id, c, t, today), item = rollChest(); return { ...r, state: addItem(r.state, item.id), item } })}
+            : (c, t) => { const r = finishLesson(s, lesson.id, c, t, today); return { ...r, state: addChest(r.state), chest: true } })}
           onExit={() => setView('home')}
+          onChest={openChestNow}
         />
       )
     }
+    case 'chest':
+      return (
+        <ChestOpen key={prize.at} item={prize.item} left={s.chests || 0} lvl={lvl} worn={(s.gear || {})[prize.item.slot] === prize.item.id}
+          onEquip={(id) => setS((x) => ((x.gear || {})[itemById(id).slot] === id ? x : equip(x, id)))}
+          onAgain={openChestNow} onExit={() => setView('home')} />
+      )
     case 'room':
       return (
         <Room {...room} me={me} lvl={lvl} gear={s.gear}
@@ -194,7 +212,7 @@ export default function App() {
                 <button className="icon-btn" type="button" onClick={() => setInvite(null)} aria-label="Recusar convite"><Icon n="x" /></button>
               </div>
             )}
-            <Tab s={s} today={today} onDaily={() => setView('daily')} onLogout={logout} me={me} setS={setS} onRoom={openRoom}
+            <Tab s={s} today={today} onDaily={() => setView('daily')} onLogout={logout} me={me} setS={setS} onRoom={openRoom} onChest={openChestNow}
               onLesson={(l) => { setLesson({ ...l, qs: lessonQs(l, trailOf(s.prefs)) }); setView('lesson') }}
               onEquip={(id) => setS(equip(s, id))}
               onRestart={() => { setS(restart(s)); setView('quiz') }} />

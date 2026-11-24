@@ -133,20 +133,48 @@ export const RARITY = {
   comum: ['Comum', '#7D86A8', 55], raro: ['Raro', '#274DEA', 25], epico: ['Épico', '#6338EE', 12],
   lendario: ['Lendário', '#D99A00', 6], ultra: ['Ultrarraro', '#E0367A', 2],
 }
+// slot = onde veste no Grão (costas fica atrás do corpo). use = prêmio instantâneo, não vai para o inventário.
 export const ITEMS = [
   { id: 'cajado', name: 'Cajado de pastor', r: 'comum', slot: 'mao', lvl: 1 },
   { id: 'sandalias', name: 'Sandálias de couro', r: 'comum', slot: 'pes', lvl: 1 },
   { id: 'faixa', name: 'Faixa de linho', r: 'comum', slot: 'cintura', lvl: 1 },
+  { id: 'flores', name: 'Coroa de flores', r: 'comum', slot: 'cabeca', lvl: 1, ref: 'Mateus 6:28' },
+  { id: 'tunica', name: 'Túnica de pastor', r: 'comum', slot: 'corpo', lvl: 1 },
+  { id: 'funda', name: 'Funda de Davi', r: 'comum', slot: 'mao', lvl: 1, ref: '1 Samuel 17:40' },
+  { id: 'sementes', name: 'Saco de sementes', r: 'comum', use: { seeds: 50 } },
   { id: 'cinto', name: 'Cinto da verdade', r: 'raro', slot: 'cintura', lvl: 2, ref: 'Efésios 6:14' },
   { id: 'calcado', name: 'Calçado da paz', r: 'raro', slot: 'pes', lvl: 2, ref: 'Efésios 6:15' },
+  { id: 'jose', name: 'Túnica colorida de José', r: 'raro', slot: 'corpo', lvl: 2, ref: 'Gênesis 37:3' },
+  { id: 'harpa', name: 'Harpa de Davi', r: 'raro', slot: 'mao', lvl: 2, ref: '1 Samuel 16:23' },
+  { id: 'lamparina', name: 'Lamparina acesa', r: 'raro', slot: 'mao', lvl: 2, ref: 'Mateus 25:4' },
+  { id: 'oleo', name: 'Óleo para as lamparinas', r: 'raro', use: { lamps: true } },
   { id: 'escudo', name: 'Escudo da fé', r: 'epico', slot: 'mao', lvl: 3, ref: 'Efésios 6:16' },
   { id: 'capacete', name: 'Capacete da salvação', r: 'epico', slot: 'cabeca', lvl: 3, ref: 'Efésios 6:17' },
+  { id: 'asas', name: 'Asas de querubim', r: 'epico', slot: 'costas', lvl: 3, ref: 'Êxodo 25:20' },
+  { id: 'celeiro', name: 'Celeiro cheio', r: 'epico', use: { seeds: 300 } },
   { id: 'restart', name: 'Restart da trilha', r: 'epico', slot: null, lvl: 1 },
   { id: 'couraca', name: 'Couraça da justiça', r: 'lendario', slot: 'corpo', lvl: 4, ref: 'Efésios 6:14' },
   { id: 'espada', name: 'Espada do Espírito', r: 'lendario', slot: 'mao', lvl: 5, ref: 'Efésios 6:17' },
+  { id: 'coroa', name: 'Coroa da vida', r: 'lendario', slot: 'cabeca', lvl: 4, ref: 'Tiago 1:12' },
+  { id: 'manto', name: 'Manto de Elias', r: 'lendario', slot: 'costas', lvl: 4, ref: '2 Reis 2:13' },
   { id: 'camisa', name: 'Camisa do Dorminhoco', r: 'ultra', slot: 'corpo', lvl: 1 },
+  { id: 'pomba', name: 'Pomba com ramo de oliveira', r: 'ultra', slot: 'mao', lvl: 1, ref: 'Gênesis 8:11' },
 ]
 export const itemById = (id) => ITEMS.find((i) => i.id === id)
+
+/** Baú ganho fica guardado até a pessoa abrir. */
+export const addChest = (s) => ({ ...s, chests: (s.chests || 0) + 1 })
+
+/** Abre um baú guardado: sorteia o prêmio e já aplica (item vai pro inventário; sementes/óleo valem na hora). */
+export function openChest(s, rnd = Math.random) {
+  if (!s.chests) return { state: s, item: null }
+  const item = rollChest(rnd)
+  let state = { ...s, chests: s.chests - 1 }
+  if (item.use?.seeds) state = { ...state, seeds: state.seeds + item.use.seeds }
+  else if (item.use?.lamps) state = { ...state, lamps: MAX_LAMPS }
+  else state = addItem(state, item.id)
+  return { state, item }
+}
 
 export function rollChest(rnd = Math.random) {
   let x = rnd() * Object.values(RARITY).reduce((a, r) => a + r[2], 0)

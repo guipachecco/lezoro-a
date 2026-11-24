@@ -45,6 +45,18 @@ const GEAR = {
   couraca: `<path d="${VEST}" fill="${GOLD}" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><path d="M60 103V133M36 114Q60 121 84 114" fill="none" stroke="${N}" stroke-width="2.5" stroke-linecap="round"/>`,
   espada: `<path d="M112 34V106" stroke="${N}" stroke-width="9" stroke-linecap="round"/><path d="M112 34V106" stroke="${STEEL}" stroke-width="5" stroke-linecap="round"/><path d="M103 106h18M112 106v14" stroke="${N}" stroke-width="5" stroke-linecap="round"/><circle cx="112" cy="122" r="3.5" fill="${GOLD}" stroke="${N}" stroke-width="2"/>`,
   // ultrarraro: camisa com a foto estampada (public/camisa.webp)
+  flores: [[30, 58, '#F29BB8'], [42, 46, '#F2C94C'], [60, 41, '#fff'], [78, 46, '#F29BB8'], [90, 58, '#F2C94C']]
+    .map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="7" fill="${c}" stroke="${N}" stroke-width="2.5"/><circle cx="${x}" cy="${y}" r="2.2" fill="${N}"/>`).join(''),
+  coroa: `<path d="M34 54L37 28L49 42L60 22L71 42L83 28L86 54Z" fill="${GOLD}" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><circle cx="60" cy="44" r="4" fill="#E0367A" stroke="${N}" stroke-width="2"/><circle cx="45" cy="48" r="3" fill="${B}"/><circle cx="75" cy="48" r="3" fill="${B}"/>`,
+  tunica: `<path d="${VEST}" fill="#D9B98A" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><path d="M44 104L60 116L76 104" fill="none" stroke="${BROWN}" stroke-width="3.5" stroke-linecap="round"/>`,
+  jose: `<clipPath id="jose-clip"><path d="${VEST}"/></clipPath><g clip-path="url(#jose-clip)">${['#E0367A', '#F2C94C', '#B6DB00', '#274DEA', '#6338EE', '#E0367A'].map((c, k) => `<rect x="${20 + k * 14}" y="96" width="14" height="42" fill="${c}"/>`).join('')}</g><path d="${VEST}" fill="none" stroke="${N}" stroke-width="4" stroke-linejoin="round"/>`,
+  funda: `<path d="M104 96Q116 84 110 62" fill="none" stroke="${BROWN}" stroke-width="3.5" stroke-linecap="round"/><path d="M104 96Q100 80 110 62" fill="none" stroke="${BROWN}" stroke-width="3.5" stroke-linecap="round"/><circle cx="110" cy="60" r="6" fill="#B8BCC8" stroke="${N}" stroke-width="2.5"/>`,
+  harpa: `<path d="M3 132V94Q3 84 12 86Q27 90 27 108V132Z" fill="none" stroke="${GOLD}" stroke-width="5" stroke-linejoin="round"/><path d="M3 132V94Q3 84 12 86Q27 90 27 108V132Z" fill="none" stroke="${N}" stroke-width="1.5"/><path d="M9 90V132M15 89V132M21 93V132" stroke="${N}" stroke-width="1.4"/>`,
+  lamparina: `<path d="M98 112H124Q122 124 110 124Q100 124 98 112Z" fill="${BROWN}" stroke="${N}" stroke-width="3" stroke-linejoin="round"/><path d="M121 112L124 106" stroke="${N}" stroke-width="3" stroke-linecap="round"/><path d="M123 104C119 100 120 95 123 90C126 95 127 100 123 104Z" fill="${GOLD}" stroke="#E0367A" stroke-width="1.5"/>`,
+  // asas saem por cima dos ombros (espelhadas), para aparecer atrás do corpo
+  asas: ['', 'transform="translate(124 0) scale(-1 1)"'].map((t) => `<g ${t}><path d="M34 66Q4 64 2 22Q24 30 40 54Z" fill="#fff" stroke="${N}" stroke-width="3.5" stroke-linejoin="round"/><path d="M30 80Q0 82 0 50Q20 54 34 66Z" fill="#fff" stroke="${N}" stroke-width="3.5" stroke-linejoin="round"/><path d="M10 34Q22 44 32 58M8 62Q20 66 30 72" fill="none" stroke="#C9D0DE" stroke-width="2.5" stroke-linecap="round"/></g>`).join(''),
+  manto: `<path d="M26 50Q-4 100 4 144H116Q124 100 94 50Z" fill="#8A5A2B" stroke="${N}" stroke-width="4" stroke-linejoin="round"/><path d="M12 96Q6 120 10 140M108 96Q114 120 110 140" fill="none" stroke="#6E4520" stroke-width="2.5"/>`,
+  pomba: `<path d="M98 58Q104 46 116 50Q124 52 122 60Q116 68 104 66Z" fill="#fff" stroke="${N}" stroke-width="3" stroke-linejoin="round"/><path d="M106 58Q112 48 120 50" fill="none" stroke="${N}" stroke-width="2"/><circle cx="117" cy="55" r="1.4" fill="${N}"/><path d="M122 58L124 64" stroke="#7FA012" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="124" cy="66" rx="2.5" ry="4" fill="${L}" stroke="${N}" stroke-width="1.2"/>`,
   camisa: `<clipPath id="camisa-clip"><path d="${VEST}"/></clipPath><path d="${VEST}" fill="#fff"/><image href="/camisa.webp" x="24" y="98" width="72" height="40" preserveAspectRatio="xMidYMid slice" clip-path="url(#camisa-clip)"/><path d="${VEST}" fill="none" stroke="${N}" stroke-width="4" stroke-linejoin="round"/>`,
 }
 
@@ -103,7 +115,7 @@ export function grao(st = 'feliz', lvl = 2, gear = {}) {
       arms = wave
   }
   const tall = lvl >= 4
-  return `<svg viewBox="${tall ? '0 -28 124 172' : '0 -10 124 154'}" role="img" aria-label="Grão, o mascote">${back}${crown(lvl, droop)}${arms}
+  return `<svg viewBox="${tall ? '0 -28 124 172' : '0 -10 124 154'}" role="img" aria-label="Grão, o mascote">${back}${GEAR[gear.costas] || ''}${crown(lvl, droop)}${arms}
 <ellipse cx="44" cy="135" rx="11" ry="6" fill="${N}"/><ellipse cx="76" cy="135" rx="11" ry="6" fill="${N}"/>
 <path d="M60 36C94 36 108 66 108 94C108 122 88 134 60 134C32 134 12 122 12 94C12 66 26 36 60 36Z" fill="${C}" stroke="${N}" stroke-width="5"/>
 <ellipse cx="60" cy="113" rx="26" ry="15" fill="${L}" opacity=".45"/>

@@ -299,3 +299,43 @@ h1, h2, h3 { font-family: var(--display); color: var(--navy); letter-spacing: -.
 .drawing { width: 100%; max-width: 360px; aspect-ratio: 1; align-self: center; display: block; margin: 0 auto; border: 2px solid var(--line); border-radius: 16px }
 .album-step { display: flex; flex-direction: column; gap: 6px }
 .gartic .bubble::before, .album-step .bubble::before { display: none }
+
+/* Baú: abertura com rachaduras, raios e confete */
+.chest-screen { position: relative; overflow: hidden; align-items: center; justify-content: center; gap: 18px; text-align: center; min-height: 100dvh }
+.chest-stage { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; display: grid; place-items: center }
+.chest-glow { position: absolute; inset: 6%; border-radius: 50%; background: var(--rc); filter: blur(28px); transition: opacity .3s }
+.chest-glow.rays { inset: -30%; filter: none; border-radius: 0; background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--rc) 55%, transparent) 0 10deg, transparent 10deg 30deg); mask: radial-gradient(circle, #000 25%, transparent 68%); animation: spin 9s linear infinite }
+.chest-btn { position: relative; border: 0; background: none; padding: 0; width: 82%; cursor: pointer; -webkit-tap-highlight-color: transparent }
+.chest-art { display: block; width: 100%; position: relative }
+.chest-art svg { width: 100%; height: auto; overflow: visible }
+.chest-art.bob { animation: bob 1.6s ease-in-out infinite }
+.chest-art.shake { animation: shake .42s ease }
+.chest-art.opened { animation: crumble .5s ease-in forwards }
+.chest-art.opened .lid { transform-box: fill-box; transform-origin: center; animation: lidfly .6s cubic-bezier(.3, .6, .4, 1) forwards }
+.chest-open { position: relative; width: 82%; display: grid; place-items: center }
+.chest-open > * { grid-area: 1 / 1 }
+.prize { animation: pop .7s cubic-bezier(.2, 1.6, .4, 1) .25s both; z-index: 2 }
+.prize-icon { width: 120px; height: 120px; border-radius: 50%; background: #fff; border: 5px solid var(--rc); display: grid; place-items: center; color: var(--rc) }
+.prize-icon .ic { width: 64px; height: 64px }
+.prize-text { animation: rise .5s ease .5s both }
+.rarity-pill { background: var(--rc); color: #fff; font: 800 12px var(--display); letter-spacing: .08em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; align-self: center }
+.hits { display: flex; gap: 8px; justify-content: center }
+.hits span { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--navy); background: #fff }
+.hits span.on { background: var(--rc) }
+.confetti { position: absolute; inset: 0; pointer-events: none; z-index: 3 }
+.confetti i { position: absolute; top: -12px; width: 9px; height: 14px; border-radius: 2px; animation: fall linear forwards }
+.chest-card { display: flex; align-items: center; gap: 12px; width: 100%; border: 3px solid var(--lime-deep, #7FA012); border-radius: 18px; padding: 10px 14px; background: var(--cream); text-align: left }
+.chest-card .chest-art { width: 64px; flex: none }
+.chest-card b { display: block; font: 800 17px var(--display); color: var(--navy) }
+@keyframes bob { 50% { transform: translateY(-6px) } }
+@keyframes shake { 0%, 100% { transform: none } 15% { transform: rotate(-8deg) translateX(-6px) scale(1.04) } 35% { transform: rotate(7deg) translateX(5px) } 55% { transform: rotate(-5deg) } 75% { transform: rotate(3deg) } }
+@keyframes lidfly { to { transform: translate(60px, -190px) rotate(40deg); opacity: 0 } }
+@keyframes crumble { to { transform: translateY(40px) scale(.85); opacity: 0 } }
+@keyframes pop { from { transform: scale(0) rotate(-12deg); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes rise { from { transform: translateY(16px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes fall { to { transform: translateY(105dvh) rotate(720deg) } }
+@media (prefers-reduced-motion: reduce) {
+  .chest-art.bob, .chest-art.shake, .chest-glow.rays, .confetti { animation: none; display: block }
+  .confetti { display: none }
+}

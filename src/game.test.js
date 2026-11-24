@@ -98,7 +98,7 @@ test('quiz de 10 perguntas define a trilha e o tamanho das lições', async () =
 test('baú, equipar e restart', async () => {
   const { rollChest, addItem, equip, restart, ITEMS } = await import('./game.js')
   assert.equal(rollChest(() => 0).r, 'comum')
-  assert.equal(rollChest(() => 0.999).id, 'camisa')
+  assert.equal(rollChest(() => 0.999).r, 'ultra')
   assert.ok(ITEMS.some((i) => i.r === 'lendario'))
   let s = addItem(addItem(base(), 'couraca'), 'restart')
   assert.equal(equip(s, 'couraca'), s) // nível 1 não veste lendário de nível 4
@@ -138,4 +138,20 @@ test('gartic: cada álbum passa por todos os jogadores, um por rodada', async ()
     }
   }
   assert.deepEqual([0, 1, 2, 3, 4].map(garticKind), ['escrever', 'desenhar', 'descrever', 'desenhar', 'descrever'])
+})
+
+test('baú guardado: abrir gasta um baú e aplica o prêmio; todo item de vestir tem desenho', async () => {
+  const { addChest, openChest, ITEMS } = await import('./game.js')
+  const { grao } = await import('./art.js')
+  let s = addChest(addChest({ ...base(), lamps: 1 }))
+  assert.equal(s.chests, 2)
+  const seq = (...xs) => { let k = 0; return () => xs[k++] }
+  // raridade comum (0) e último item da lista comum = saco de sementes
+  const commons = ITEMS.filter((i) => i.r === 'comum')
+  let r = openChest(s, seq(0, (commons.length - 0.5) / commons.length))
+  assert.deepEqual([r.item.id, r.state.seeds, r.state.chests, r.state.inv], ['sementes', 50, 1, undefined])
+  r = openChest(r.state, seq(0, 0)) // primeiro comum = cajado, vai para o inventário
+  assert.deepEqual([r.item.id, r.state.inv.cajado, r.state.chests], ['cajado', 1, 0])
+  assert.equal(openChest(r.state).item, null)
+  for (const it of ITEMS.filter((i) => i.slot)) assert.notEqual(grao('feliz', 2, { [it.slot]: it.id }), grao('feliz', 2), `desenho de ${it.id}`)
 })
